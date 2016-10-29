@@ -8,9 +8,10 @@ import java.util.Scanner;
 public class Client {
 	public static void main(String[] args){
 		try{
-			String servername = args[0];
-			int port = Integer.parseInt(args[1]);
-			Scanner messageScanner = new Scanner(System.in);
+			Scanner scanner = new Scanner(System.in);
+			String servername = "localhost";
+			System.out.print("Port: ");
+			int port = Integer.parseInt(scanner.nextLine());
 			try{
 				Socket client = new Socket(servername, port);
 				System.out.println("Connecting to " + servername + " on port " + port );
@@ -18,27 +19,27 @@ public class Client {
 				boolean connected = true;
 				while(connected){
 					try{
-						
-						String message = messageScanner.nextLine();
+						System.out.print("Message: ");
+						String message = scanner.nextLine();
 						OutputStream toServer = client.getOutputStream();
 						DataOutputStream dataOutput = new DataOutputStream(toServer);
-						dataOutput.writeUTF("Client " + client.getLocalSocketAddress() + " message: " + message);
+						dataOutput.writeUTF(message);
 						
 						InputStream fromServer = client.getInputStream();
 						DataInputStream dataInput = new DataInputStream(fromServer);
-						System.out.println("Server: " + dataInput.readUTF());
+						System.out.println(dataInput.readUTF());
 						
 					}catch(Exception e){
 						client.close();
-						messageScanner.close();
+						scanner.close();
 						connected = false;
-						e.printStackTrace();
+						System.out.println("Disconnected from server");
 					}
 				}
 				
 			}catch(Exception e){
 				System.out.println("Can't connect to server");
-				messageScanner.close();
+				scanner.close();
 			}
 		}catch(Exception e){
 			System.out.println("Usage: java Client <servername> <port>");
