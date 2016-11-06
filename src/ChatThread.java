@@ -7,40 +7,46 @@ public class ChatThread extends Thread{
 	private DataInputStream input = null;
 	private DataOutputStream output = null;
 	private Socket client = null;
-	//ArrayList<Socket> clientThread = new ArrayList<Socket>();
-	private ChatThread[] clientThreads;
-	private int maxClient;
-	
-	public ChatThread(Socket client,ChatThread[] clientThreads){
+	private static ArrayList<Socket> clientList =  new ArrayList<Socket>();
+	@SuppressWarnings("static-access")
+	public ChatThread(Socket client, ArrayList<Socket> clientList){
 		this.client = client;
-		this.clientThreads = clientThreads;
-		maxClient = clientThreads.length;
+		this.clientList = clientList;
 	}
 	
+	@SuppressWarnings("static-access")
 	public void run(){		
-		int maxClient = this.maxClient;
-		ChatThread[] clientThreads = this.clientThreads;
+		ArrayList<Socket> clientList = this.clientList;
 		try{
 			input = new DataInputStream(client.getInputStream());
 			output = new DataOutputStream(client.getOutputStream());
 			output.writeUTF("Username: ");
 			String username = input.readUTF().trim();
+			
+			for(int i = 0; i < clientList.size(); i++){
+				DataOutputStream broadcast = new DataOutputStream(clientList.get(i).getOutputStream());
+				broadcast.writeUTF("Server : " + username + " Connected");
+			}
+			
 			while(true){
 				String message = input.readUTF();
-				for(int i = 0; i < maxClient; i++){
-					if(clientThreads[i]!=null){
-						clientThreads[i].output.writeUTF(username + ": " + message);
-					}
+				
+				for(int i = 0; i < clientList.size(); i++){
+					DataOutputStream broadcast = new DataOutputStream(clientList.get(i).getOutputStream());
+					broadcast.writeUTF(username + " : " + message);
 				}
 			}
 			
 		}catch(Exception e){
-			System.out.println("Error");
+			System.out.println(client.getLocalSocketAddress() + " Disconnected");
 			try{
 				output.close();
 				input.close();
+				clientList.remove(clientList.indexOf(client));
 				client.close();
-			}catch(Exception e1){System.out.println(e1.getStackTrace());}
+			}catch(Exception e1){
+				clientList.remove(clientList.indexOf(client));
+			}
 			
 		}
 		

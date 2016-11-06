@@ -29,8 +29,6 @@ public class Client implements Runnable{
 					new Thread(new Client()).start();
 					
 					while(connected){
-						//System.out.print("Message: ");
-						//String message = scanner.nextLine().trim();
 						try{
 							dataOutput.writeUTF(scanner.nextLine());
 						}catch(Exception e){

@@ -1,4 +1,4 @@
-import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -7,8 +7,7 @@ import java.util.Scanner;
 public class Server{
 	private static ServerSocket serverSocket = null;
 	private static Socket client = null;
-	private static final int maxClient = 20;
-	private static final ChatThread[] clientThreads = new ChatThread[maxClient];
+	private static final ArrayList<Socket> clientList = new ArrayList<Socket>();
 	
 	public static void main(String[] args){
 		Scanner scanner = new Scanner(System.in);
@@ -22,25 +21,19 @@ public class Server{
 			while(true){
 				client = serverSocket.accept();
 				if(client.isConnected()){
-					int count;
-					for(count = 0; count < maxClient; count++){
-						if(clientThreads[count] == null){
-							(clientThreads[count] = new ChatThread(client, clientThreads)).start();
-							break;
-						}
-					}
-					if(count == maxClient){
-						DataOutputStream output = new DataOutputStream(client.getOutputStream());
-						output.writeUTF("Can't connect to server");
-						output.close();
-						client.close();
-					}
+					clientList.add(client);
+					(new ChatThread(client, clientList)).start();;
 				}
-				
 			}
 			
 		}catch(Exception e){
-			System.out.println("Invalid port input");
+			System.out.println("Invalid port");
+			try {
+				serverSocket.close();
+				client.close();
+			} catch (IOException e1) {}
+			clientList.clear();
+			
 		}
 		scanner.close();
 	}
