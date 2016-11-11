@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="5" tileheight="5">
+ <tileset firstgid="1" name="black_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/black_bg.png" width="32" height="32"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2XsQ7DMAhEs3ZJlnbq//9n1SESooDhIKnTctINpiXmxTJ2lqXVml9P5lF8VjXHXPoljo1416bEK+et8KheLV41f3PMxbEy07j0u2aUw/t8zVKNqDLrgc5rrQUq3ke1niTFj+ZA9wfCgcwT4fDqrPXIcDwMa7WgHKO5/o1jZf/zqopjJImD1j3i4D1zVEuG4y5Yqon2BxobcfB6rFqyHNr4DI4b6Nk4dvE6aY4Ub47m0MbvPKv3W56JA2Wo5PCcg9G+G1GWwzrLeY6XI7oWGY59HLnvNsc1ORDNyCHtOctHcWT7VWRdshy070bu7Ysx/jYHjTXHtTg834NVHEd9D6I1VeecyZHtu5YyHJ4zOcLM5b0LnMFRcZ5nOTznoKeWjL2S3j0/z6Ucr1cgh9aD5NE6kXciKcuRUXN8qmKfo+IckXep7Q9E2bkpR8VzZuDwmOZIz8hwVPgFFfrxWhAnAAA=
+  </data>
+ </layer>
+</map>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="5" tileheight="5">
+ <tileset firstgid="1" name="black_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/black_bg.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="37" name="green2_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/green2_bg.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="73" name="green_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/green_bg.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="109" name="yellow_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/yellow_bg.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="145" name="blue_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/blue_bg.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="181" name="white_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/white_bg.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="217" name="red_bg" tilewidth="5" tileheight="5">
+  <image source="../Documents/red_bg.png" width="32" height="32"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2aTU/DMAyGkyMTtBzYiRPw+/b/rxtSLVmWP+MkC6iW3kPdNvYTN04mrZTTTlvfPoks/6r2m+PtEOXg/Kvaf+KohygH51/V8LzvyL8L/p5xe8jKV/L3in9yrMWxEWE/d19SK4d3fElcjrdG0XpgWf7WuFotenDgnKlx/tEcreujhSMSp4VjtXpkOK6K4Fm8zjMcVqwRHK+E4y2g7eB5H8SxFb6GlugcwLzT5zh/9rvCfd/ioD3TyiXD8UFUhZxwfwDzcNB8RnLg69kcL42yOPD1zHrQPPE7nP/kODk0Dq33a3oGx0XgaGXQOCCWt1959sH9GBeU2cuoOA4cy+LQ9vJWjmgtPBzSdwXXkfOud51fiV+TxuFZH6M5LH099P3Qz8IcvdbHszm4NadpFAceE/eJCMfFqSwH7rvauf0vcYCtzJE9t6/C0ftcgvvlSI5axv0etNSTQ9NMDktQ11rmcnjOSBFmaQ60WLM4eu3neNyK5OHwnNs9uURVmZjR7wpYpDMJvOMV7Kc4jrS+4X5F8xiJxeWpcUS/jQxHJvYoDq9W5mix3hyRuZTWRyuHt374fwQ0fpZhFocV3yv8DjdGhqOH7g+5dEQQJwAA
+  </data>
+ </layer>
+</map>
