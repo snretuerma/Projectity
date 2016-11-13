@@ -1,21 +1,15 @@
 package game;
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
-public class Player {
-	private double x;
-	private double y;
+public class Player extends GameObject{
 	private double velocityX = 0;
 	private double velocityY = 0;
+	private Textures texture;
 	
-	private BufferedImage playerSprite = null;
-	
-	public Player(double x, double y, Game game){
-		this.x = x;
-		this.y = y;
-		SpriteSheet spriteSheet = new SpriteSheet(game.getSpriteSheet());
-		playerSprite = spriteSheet.getImage(1, 1, 32, 32);
+	public Player(double x, double y, Textures texture){
+		super(x, y);
+		this.texture = texture;
 	}
 	
 	public void update(){
@@ -23,6 +17,7 @@ public class Player {
 		x+=velocityX;
 		y+=velocityY;
 		
+		// for window boundary detection
 		if(x <= 0) x = 0;
 		if(x>=780) x=780;
 		if(y <= 0) y = 0;
@@ -31,7 +26,7 @@ public class Player {
 	}
 	
 	public void render(Graphics g){
-		g.drawImage(playerSprite, (int)x, (int)y, null);
+		g.drawImage(texture.player, (int)x, (int)y, null);
 	}
 	
 	public void setX(double x){

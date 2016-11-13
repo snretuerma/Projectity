@@ -12,17 +12,22 @@ import javax.swing.JFrame;
 public class Game extends Canvas implements Runnable{
 
 	private static final long serialVersionUID = 1L;
-	public static final int width = 400;
+	public static final int width = 390;
 	public static final int height = width/12*9;
 	public static final int scale = 2;
 	public final String title = "Tankz2D";
-	public boolean running = false;
+	private boolean running = false;
 	private Thread thread;		
 	private BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	private BufferedImage spriteSheet = null;
+	private BufferedImage background = null;
 	
+	private boolean shooting = false;
+	
+	private Textures texture = null;
 	private Player player = null;
-	private Cartridge cartridge = null;
+	private GameController cartridge = null;
+	
 	
 	public void init(){
 		requestFocus();
@@ -30,13 +35,15 @@ public class Game extends Canvas implements Runnable{
 		
 		try {
 			spriteSheet = loader.loadImage("/zzz.png");
+			background = loader.loadImage("/map.png");
 		} catch (IOException e) {
 			System.out.println("Image not found");
 		}
 		
 		addKeyListener(new KeyInput(this));
-		player = new Player(200, 200, this);
-		cartridge = new Cartridge(this);
+		texture = new Textures(this);
+		player = new Player(200, 200, texture);
+		cartridge = new GameController(this, texture);
 	}
 	
 	private synchronized void start(){
@@ -114,6 +121,7 @@ public class Game extends Canvas implements Runnable{
 		 Graphics graphics = bufferStrategy.getDrawGraphics();
 		 ////////////////////////////////////////////////////
 		 graphics.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+		 graphics.drawImage(background, 0, 0, null);
 		 player.render(graphics);
 		 cartridge.render(graphics);
 		 ///////////////////////////////////////////////////
@@ -133,8 +141,9 @@ public class Game extends Canvas implements Runnable{
 			player.setVelocityY(3);
 		}else if(key == KeyEvent.VK_UP){
 			player.setVelocityY(-3);
-		}else if(key == KeyEvent.VK_SPACE){
-			cartridge.addBullet(new Bullet(player.getX(), player.getY(), this));
+		}else if(key == KeyEvent.VK_SPACE && !shooting){
+			shooting = true;
+			cartridge.addBullet(new Bullet(player.getX(), player.getY(), texture));
 		}
 	}
 	
@@ -147,8 +156,12 @@ public class Game extends Canvas implements Runnable{
 		}else if(key == KeyEvent.VK_DOWN){
 			player.setVelocityY(0);
 		}else if(key == KeyEvent.VK_UP){
-			player.setVelocityX(0);
+			player.setVelocityY(0);
+		}else if(key == KeyEvent.VK_SPACE ){
+			shooting = false;
 		}
+		
+		
 	}
 	
 	
