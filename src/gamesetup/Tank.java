@@ -1,5 +1,7 @@
 package gamesetup;
 
+import java.net.InetAddress;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -7,7 +9,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
-public class Panzer {
+public class Tank {
 	private Vector2f position;
 	private boolean alive = true;
 	private Image sprite = null;
@@ -15,13 +17,14 @@ public class Panzer {
 	private int kills = 0;
 	
 	
-	public Panzer(Vector2f position){
+	public Tank(Vector2f position){
 		this.position = position;
 		try {
 			sprite = new Image("components/sprites/tank1d.png");
 		} catch (SlickException e) {
 			System.out.println("Error : Character sprite not found");
 		}
+		
 	}
 	
 	public void render(GameContainer gameContainer, Graphics graphics){
@@ -32,7 +35,8 @@ public class Panzer {
 		else{
 			//@TODO Render projectile  
 			graphics.drawImage(sprite, position.getX()-10, position.getY()-10);
-			graphics.drawString("Position:" + position.getX(), 40, 40);
+			graphics.drawString("Position X:" + position.getX(), 40, 30);
+			graphics.drawString("Position Y:" + position.getY(), 40, 50);
 		}
 	}
 	

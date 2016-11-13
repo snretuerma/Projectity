@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="10" tileheight="10" nextobjectid="1">
+ <tileset firstgid="1" name="terrain" tilewidth="10" tileheight="10" tilecount="10404" columns="102">
+  <image source="terrain.png" width="1024" height="1024"/>
+ </tileset>
+ <layer name="Terrain" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC51aW3LbMAyUY/VCvVNt5UhtfaTYPVIqT42ZndXuAukHJ4oIgnguQMqndVne9vHzvCy/9rHsz6fXO3y+7mMzdM9x38djH3+A5vf53zPTMg+ex7G9hqOruZLv9uJ7gXdOJ+bHtIoGaWte8eHxo6FjO7+BDs+1n2RH5HMifk5Wta/Tk2VTehbdVcxdYf1HY3eUUflgo3mlJ69juuRzXMs8nrJXbF9fPkFaZZcUp/ys5HDru1hLuZvsfyG9OL6cT1z+bsAT48DR8mBZiu5ONnE2wH2Vj3Hde5DpsR5xpLN/hy9ObsaBzr+dXvy+9GAZixZ1ZPu7vHIyO5xh2s5WinfJz/HFuYgxjWswHjFWpz5RPqx8mdST5DP0FerS4SX6L+FZwtLO1+w3hRWsV/nB2R/lKIytv9Nasa1HGyodFJ/EG2VFv6i4q/nqeW7Q/7g9VB1LNWAaS8Wv5OM8YF1ULk1z09VcrI3sc4c/3TvMa6dL0qHkYllSHS49FG+OM+7vJjHHvcRp9bHFGMH9IMufar6rBc5mk1qnMCvll8IRh0dODxUTal/mf6Hh4um6Hn3PuNX5DfMw6eHqFuc1+6TwRu3BOc61T/nndj7atesVeQ5x0/mXfYV0NxPbru6o+OT8UjHo1tf7h/FD2Rrjw8W7iovUo27r0VcJf1X96PKBed6NrZg/Y7rKDeePJH+SzeWCinfX7yj+ylfJvoWpbJdO/rSvwuRUU1knh02p1pa/Oc7YxylvWTekc/ig+Lm62PkK73pSferOCCrOOX+czCrWJ/0ZzlWvu5AP0X5dX+Nkc3vyOicn+zTtqfqY5P9OttTXKLxLazrfoK54T9XFsNKT80jt97HqnE0Yn3RQ+OVqJNcgh5eMsSgr9pWuvibcSjpM/OnqQ9KBa02KxY4+6cA6d3X3K3IUXkxrl6ot2Pd3/UQnlzrXu5xwvW7SNdXxikNX+9RZTe1V2IsYm/I69ZNIk85v+A7vC/hMovRLOeL6TIdfCWfSGrapqqvOdun8UXPdNxuFF0w/+V/hI8em6o84vtg+VdPdeVj1FA6vu75V+dPll7J/dz6qeqjOw8gvff9x/aLTWemA+PcQPB19/f/9m8fryj/F1+mGMfQ/vT6Pab6eSMdpHUl463LMrXOYm/oJlb+qJ0/9uXrH3xUdbiTZJr2ri2O0R3entIm1rteZ5Afyxdj9ig6TXkSdP1SMTPZL8j3H59nfpXC8uhxBWd2z4pdwUPlx2utMfKDeva++zqjzYFfbXe4qPZKPlB+mPH6fdSy5wXs5LOl6UIVtKuZTfvC9Zrp36XpZ3kvVGCWPiufO5kknXq9ypebSbziK9r4ebd3lceKb7sQuYV/swdR3DhffN/HbJrU39qkTHHI5qPAw3f1yLqazb5cTSsaEHZzzvEadWfC3M9wvIl+OQ6RJ36qQNuUj2yzp/Be5H6f3ECcAAA==
+  </data>
+ </layer>
+ <layer name="Objects" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3asQ2AMAwAwewAUwEzAcMCc+DSDWXIW/qTLKW0lC+9T60dMWfMXvh9xdwxT/H3Mre2xmxz7Xf+o2ry7vmPqsm75z+qJu9uV+PZFYtdsdgVi12x2BWLXbHYFYtdsdgVi12x2BWLXbHYFYtdsdgVi12x2BWLXbHYFcvXzUk1XzcnPe6KRtwy9bgrGnHL1OOu6K/7pRcC9ZCYECcAAA==
+  </data>
+ </layer>
+</map>
