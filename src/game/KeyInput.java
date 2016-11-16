@@ -9,6 +9,7 @@ public class KeyInput extends KeyAdapter{
 	
 	public KeyInput(Game game){
 		this.game = game;
+		game.addKeyListener(this);
 	}
 	
 	public void keyPressed(KeyEvent e){

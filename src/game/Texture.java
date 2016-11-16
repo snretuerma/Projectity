@@ -6,12 +6,12 @@ package game;
 
 import java.awt.image.BufferedImage;
 
-public class Textures {
+public class Texture {
 	
 	public BufferedImage player, bullet, enemy;
 	private SpriteSheet spritesheet = null;
 	
-	public Textures(Game game){
+	public Texture(Game game){
 		spritesheet = new SpriteSheet(game.getSpriteSheet());
 		getTextures();
 	}

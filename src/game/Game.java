@@ -7,7 +7,14 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.InetAddress;
+
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import network.GameClient;
+import network.GameServer;
+import network.packets.ConnectPacket;
 
 public class Game extends Canvas implements Runnable{
 
@@ -24,35 +31,67 @@ public class Game extends Canvas implements Runnable{
 	
 	private boolean shooting = false;
 	
-	private Textures texture = null;
-	private Player player = null;
-	private GameController cartridge = null;
+	public Texture texture = null;
+	public Player player = null;
+	public GameController controller = null;
+	public KeyInput input = null;
+	private String username;
 	
+	/** Network Sample **/ 
+	private GameClient client = null;
+	private GameServer server = null;
+	
+//	public Game(){
+//		this.setPreferredSize(new Dimension(width*scale, height*scale));
+//		this.setMaximumSize(new Dimension(width*scale, height*scale));
+//		this.setMinimumSize(new Dimension(width*scale, height*scale));
+//		this.setVisible(true);
+//		this.start();
+//	}
 	
 	public void init(){
 		requestFocus();
+		
+		
+		
 		BufferedImageLoader loader = new BufferedImageLoader();
 		
 		try {
-			spriteSheet = loader.loadImage("/zzz.png");
+			spriteSheet = loader.loadImage("/spritesheet.png");
 			background = loader.loadImage("/map.png");
 		} catch (IOException e) {
 			System.out.println("Image not found");
 		}
 		
-		addKeyListener(new KeyInput(this));
-		texture = new Textures(this);
-		player = new Player(200, 200, texture);
-		cartridge = new GameController(this, texture);
-	}
-	
-	private synchronized void start(){
+		this.input = new KeyInput(this);
+		texture = new Texture(this);
+		player = new NetworkPlayer(200, 200, username, input, texture, null, -1);
+		controller = new GameController(this, input, texture);
+		controller.addEntity(player);
+		ConnectPacket  packet = new ConnectPacket(username);
+		if(server!=null){
+			server.addConnection((NetworkPlayer) player, packet);
+		}
+		packet.writeData(client);
+		
+	} 
+	private synchronized void start(){ 
 		if(running ){
 			return;
 		}
 		running = true;
 		thread = new Thread(this);
 		thread.start();
+		
+		if(JOptionPane.showConfirmDialog(this, "Create Server") == 0){
+			server = new GameServer(this, texture, input, controller, player);
+			server.start();
+		}
+		
+		client = new GameClient(this, "localhost", input, texture);
+        client.start();		  
+      
+      	username = JOptionPane.showInputDialog(this, "Username");
 	}
 	
 	private synchronized void stop(){
@@ -82,6 +121,7 @@ public class Game extends Canvas implements Runnable{
 		long timer = System.currentTimeMillis();
 		
 		while(running){
+			//client.send(player.getState().getBytes());
 			long time = System.nanoTime();
 			delta += (time - prevtime)/nsec;	
 			prevtime = time;								// update the time 
@@ -96,7 +136,7 @@ public class Game extends Canvas implements Runnable{
 			
 			if(System.currentTimeMillis() - timer > 1000){
 				timer += 1000;
-				System.out.println("Updates : " + updates + " FPS: " + frames);
+				//System.out.println("Updates : " + updates + " FPS: " + frames);
 				
 				// reset updates and frame counter
 				updates = 0;
@@ -109,7 +149,8 @@ public class Game extends Canvas implements Runnable{
 	
 	private void update(){
 		player.update();
-		cartridge.update();
+		controller.update();
+		
 	}
 	
 	private void render(){
@@ -123,7 +164,7 @@ public class Game extends Canvas implements Runnable{
 		 graphics.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 		 graphics.drawImage(background, 0, 0, null);
 		 player.render(graphics);
-		 cartridge.render(graphics);
+		 controller.render(graphics);
 		 ///////////////////////////////////////////////////
 		 graphics.dispose();
 		 bufferStrategy.show();
@@ -135,15 +176,19 @@ public class Game extends Canvas implements Runnable{
 		
 		if(key == KeyEvent.VK_RIGHT){
 			player.setVelocityX(3);
+			player.setDirection('r');
 		}else if(key == KeyEvent.VK_LEFT){
 			player.setVelocityX(-3);
+			player.setDirection('l');
 		}else if(key == KeyEvent.VK_DOWN){
 			player.setVelocityY(3);
+			player.setDirection('d');
 		}else if(key == KeyEvent.VK_UP){
 			player.setVelocityY(-3);
+			player.setDirection('u');
 		}else if(key == KeyEvent.VK_SPACE && !shooting){
 			shooting = true;
-			cartridge.addBullet(new Bullet(player.getX(), player.getY(), texture));
+			controller.addEntity(new Bullet(player.getX(), player.getY(), texture, player.getDirection()));
 		}
 	}
 	
