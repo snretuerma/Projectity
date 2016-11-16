@@ -27,4 +27,14 @@ public class Enemy implements Entity{
 	public double getY() {
 		return y;
 	}
+
+	@Override
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	@Override
+	public void setY(double y) {
+		this.y = y;
+	}
 }

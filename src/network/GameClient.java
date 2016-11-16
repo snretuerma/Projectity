@@ -15,6 +15,7 @@ import network.packets.ConnectPacket;
 import network.packets.DisconnectPacket;
 import network.packets.Packet;
 import network.packets.Packet.PacketTypes;
+import network.packets.StatePacket;
 
 public class GameClient extends Thread{
 	private InetAddress address;
@@ -43,11 +44,6 @@ public class GameClient extends Thread{
 				e.printStackTrace();
 			}
 			this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-			//System.out.println("SERVER >> " + new String(packet.getData()));
-//			String message = new String(packet.getData()).trim();
-//			if(true){
-//				send(message.getBytes());
-//			}
 		}
 	}
 	
@@ -73,7 +69,7 @@ public class GameClient extends Thread{
 			case CONNECT:
 				packet = new ConnectPacket(data);
 				System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Joined");
-				NetworkPlayer netplayer = new NetworkPlayer(100.0, 100.0, ((ConnectPacket) packet).getUsername(),game.input, game.texture, address, port);
+				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, ((ConnectPacket) packet).getUsername(),game.input, game.texture, address, port);
 				game.controller.addEntity(netplayer);				
 				break;
 				
@@ -82,11 +78,19 @@ public class GameClient extends Thread{
 				System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + ((DisconnectPacket) packet).getUsername() + " left");
 				game.controller.removePlayerEntity(((DisconnectPacket) packet).getUsername());
 				break;
-				
+			
+			case STATE:
+				packet = new StatePacket(data);
+				handleState((StatePacket)packet);
+				break;
 			default: 
 				break;
 			
 		}
 	}
 	
+	
+	private void handleState(StatePacket packet){
+		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY());
+	}
 }

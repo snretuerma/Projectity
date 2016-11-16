@@ -52,4 +52,22 @@ public class GameController {
 		}
 		this.entityList.remove(index);
 	}
+	
+	private int getPlayerIndex(String username){
+		int index = 0;
+		for(Entity e : entityList){
+			if(e instanceof NetworkPlayer &&((NetworkPlayer) e).getUsername().equals(username)){
+				break;
+			}
+			index++;
+		}
+		return index;
+	}
+	
+	public void setState(String username, double x, double y){
+		int index = getPlayerIndex(username);
+		this.entityList.get(index).setX(x);
+		this.entityList.get(index).setY(y);
+	}
+	
 }

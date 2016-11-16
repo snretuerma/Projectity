@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.net.InetAddress;
 
+import network.packets.StatePacket;
+
 public class Player extends GameObject implements Entity{
 	private double velocityX = 0;
 	private double velocityY = 0;
@@ -14,8 +16,8 @@ public class Player extends GameObject implements Entity{
 	private int port;
 	private KeyInputHandler input = null;
 	
-	public Player(double x, double y, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
-		super(x, y);
+	public Player(Game game, double x, double y, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
+		super(game, x, y);
 		this.username = username;
 		this.input = input;
 		this.texture = texture;
@@ -35,7 +37,9 @@ public class Player extends GameObject implements Entity{
 			if(y <= 0) y = 0;
 			if(y >= 555) y = 555;
 //		}
-		
+			
+			StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y);
+			packet.writeData(game.client);
 	}
 	
 	public void render(Graphics g){

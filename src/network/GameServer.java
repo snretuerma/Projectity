@@ -17,6 +17,7 @@ import network.packets.ConnectPacket;
 import network.packets.DisconnectPacket;
 import network.packets.Packet;
 import network.packets.Packet.PacketTypes;
+import network.packets.StatePacket;
 
 public class GameServer extends Thread{
 	private DatagramSocket socket;
@@ -45,11 +46,6 @@ public class GameServer extends Thread{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-//			String message = new String(packet.getData()).trim();
-//			System.out.println("CLIENT >> " + message);
-//			if(true){
-//				send(message.getBytes(), packet.getAddress(), packet.getPort());
-//			}
 			
 			this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 		}
@@ -67,7 +63,7 @@ public class GameServer extends Thread{
 			case CONNECT:
 				packet = new ConnectPacket(data);
 				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
-				NetworkPlayer netplayer = new NetworkPlayer(100.0, 100.0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
+				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
 				this.addConnection(netplayer, (ConnectPacket) packet);				
 				break;
 				
@@ -75,6 +71,12 @@ public class GameServer extends Thread{
 				packet = new DisconnectPacket(data);
 				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((DisconnectPacket) packet).getUsername() + " Disconnected");
 				this.removeConnection((DisconnectPacket) packet);				
+				break;
+			
+			case STATE:
+				packet = new StatePacket(data);
+				System.out.println(((StatePacket)packet).getUsername() + " moved " + ((StatePacket)packet).getX() + ", " + ((StatePacket)packet).getY() );
+				this.handleState((StatePacket)packet);
 				break;
 				
 			default: 
@@ -152,5 +154,13 @@ public class GameServer extends Thread{
 		this.playerList.remove(getPlayerIndex(packet.getUsername()));
 		packet.writeData(this);
 	}
-		
+	
+	private void handleState(StatePacket packet){
+		if(getPlayer(packet.getUsername())!=null){
+			int playerIndex = getPlayerIndex(packet.getUsername());
+			this.playerList.get(playerIndex).x = packet.getX();
+			this.playerList.get(playerIndex).y = packet.getY();
+			packet.writeData(this);
+		}
+	}
 }

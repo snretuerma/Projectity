@@ -42,6 +42,7 @@ public class Game extends Canvas implements Runnable{
 	/** Network Sample **/ 
 	public GameClient client = null;
 	public GameServer server = null;
+	private Game game;
 	
 //	public Game(){
 //		this.setPreferredSize(new Dimension(width*scale, height*scale));
@@ -53,9 +54,7 @@ public class Game extends Canvas implements Runnable{
 	
 	public void init(){
 		requestFocus();
-		
-		
-		
+		game = this;
 		BufferedImageLoader loader = new BufferedImageLoader();
 		
 		try {
@@ -68,7 +67,7 @@ public class Game extends Canvas implements Runnable{
 		this.input = new KeyInputHandler(this);
 		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
-		player = new NetworkPlayer(200, 200, username, input, texture, null, -1);
+		player = new NetworkPlayer(game, 200, 200, username, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
 		controller.addEntity(player);
 		ConnectPacket  packet = new ConnectPacket(username);
@@ -124,18 +123,26 @@ public class Game extends Canvas implements Runnable{
 		long timer = System.currentTimeMillis();
 		
 		while(running){
-			//client.send(player.getState().getBytes());
 			long time = System.nanoTime();
 			delta += (time - prevtime)/nsec;	
 			prevtime = time;								// update the time 
-			if(delta >= 1){
+			boolean render = true;
+			while(delta >= 1){
 				update();									// do updates per second
 				updates++;
 				delta--;
+				render = true;
+			}
+			try{
+				Thread.sleep(2);
+			}catch(InterruptedException e){
+				e.printStackTrace();
 			}
 			
-			render();										// render frames
-			frames++;
+			if(render){
+				frames++;	
+				render();										// render frames
+			}
 			
 			if(System.currentTimeMillis() - timer > 1000){
 				timer += 1000;
