@@ -9,9 +9,9 @@ public class GameController {
 	
 	private Texture texture;
 	private Game game;
-	private KeyInput input;
+	private KeyInputHandler input;
 	
-	public GameController(Game game, KeyInput input,  Texture texture){
+	public GameController(Game game, KeyInputHandler input,  Texture texture){
 		this.game = game;
 		this.input = input;
 		this.texture = texture;
@@ -40,5 +40,16 @@ public class GameController {
 	
 	public void removeEntity(Entity e){
 		entityList.remove(e);
+	}
+	
+	public void removePlayerEntity(String username){
+		int index = 0;
+		for(Entity e : entityList){
+			if(e instanceof NetworkPlayer &&((NetworkPlayer) e).getUsername().equals(username)){
+				break;
+			}
+			index++;
+		}
+		this.entityList.remove(index);
 	}
 }

@@ -9,11 +9,12 @@ import java.util.ArrayList;
 
 import game.Game;
 import game.GameController;
-import game.KeyInput;
+import game.KeyInputHandler;
 import game.NetworkPlayer;
 import game.Player;
 import game.Texture;
 import network.packets.ConnectPacket;
+import network.packets.DisconnectPacket;
 import network.packets.Packet;
 import network.packets.Packet.PacketTypes;
 
@@ -24,7 +25,7 @@ public class GameServer extends Thread{
 	GameController controller;
 	Player player;
 	
-	public GameServer(Game game, Texture texture, KeyInput input, GameController controller, Player player){
+	public GameServer(Game game, Texture texture, KeyInputHandler input, GameController controller, Player player){
 		this.game = game;
 		this.controller = controller;
 		this.player = player;
@@ -67,16 +68,13 @@ public class GameServer extends Thread{
 				packet = new ConnectPacket(data);
 				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
 				NetworkPlayer netplayer = new NetworkPlayer(100.0, 100.0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
-				this.addConnection(netplayer, (ConnectPacket) packet);
-//				if(netplayer != null){
-//					this.playerList.add(netplayer);
-//					game.controller.addEntity(netplayer);
-//					game.player = netplayer;
-//				}
-				
+				this.addConnection(netplayer, (ConnectPacket) packet);				
 				break;
 				
 			case DISCONNECT:
+				packet = new DisconnectPacket(data);
+				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((DisconnectPacket) packet).getUsername() + " Disconnected");
+				this.removeConnection((DisconnectPacket) packet);				
 				break;
 				
 			default: 
@@ -94,10 +92,11 @@ public class GameServer extends Thread{
 		}
 	}
 	
+	
 	// broadcast message of a client to all the connected clients
 	public void broadcast(byte[] data){
-		for(NetworkPlayer np : playerList){
-			send(data, np.getAddress(), np.getPort());
+		for(NetworkPlayer player : playerList){
+			send(data, player.getAddress(), player.getPort());
 		}
 	}
 
@@ -112,7 +111,6 @@ public class GameServer extends Thread{
 				
 				if(p.getPort() == -1){
 					p.setPort(player2.getPort());
-					System.out.println(p.getPort());
 				}
 				connected = true;
 			}				
@@ -129,5 +127,30 @@ public class GameServer extends Thread{
 		}
 	}
 	
+	
+	public NetworkPlayer getPlayer(String username){
+		for(NetworkPlayer player : playerList){
+			if(player.getUsername().equals(username)){
+				return player;
+			}
+		}
+		return null;
+	}
+	
+	public int getPlayerIndex(String username){
+		int index = 0;
+		for(NetworkPlayer player : playerList){
+			if(player.getUsername().equals(username)){
+				break;
+			}
+			index++;
+		}
+		 return index;
+	}
+	
+	public void removeConnection(DisconnectPacket packet) {
+		this.playerList.remove(getPlayerIndex(packet.getUsername()));
+		packet.writeData(this);
+	}
 		
 }

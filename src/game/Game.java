@@ -23,6 +23,7 @@ public class Game extends Canvas implements Runnable{
 	public static final int height = width/12*9;
 	public static final int scale = 2;
 	public final String title = "Tankz2D";
+	public JFrame frame;
 	private boolean running = false;
 	private Thread thread;		
 	private BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -34,12 +35,13 @@ public class Game extends Canvas implements Runnable{
 	public Texture texture = null;
 	public Player player = null;
 	public GameController controller = null;
-	public KeyInput input = null;
+	public KeyInputHandler input = null;
+	public WindowHandler windowHandler;
 	private String username;
 	
 	/** Network Sample **/ 
-	private GameClient client = null;
-	private GameServer server = null;
+	public GameClient client = null;
+	public GameServer server = null;
 	
 //	public Game(){
 //		this.setPreferredSize(new Dimension(width*scale, height*scale));
@@ -63,7 +65,8 @@ public class Game extends Canvas implements Runnable{
 			System.out.println("Image not found");
 		}
 		
-		this.input = new KeyInput(this);
+		this.input = new KeyInputHandler(this);
+		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
 		player = new NetworkPlayer(200, 200, username, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
@@ -229,15 +232,15 @@ public class Game extends Canvas implements Runnable{
 		game.setMaximumSize(new Dimension(width*scale, height*scale));
 		game.setMinimumSize(new Dimension(width*scale, height*scale));
 		
-		JFrame	frame = new JFrame(game.title);
-		frame.add(game);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+		game.frame = new JFrame(game.title);
+		game.frame.add(game);
+		game.frame.setVisible(true);
+		game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		game.frame.setResizable(false);
 		
 		
-		frame.pack();
-		frame.setLocationRelativeTo(null);
+		game.frame.pack();
+		game.frame.setLocationRelativeTo(null);
 		
 		game.start();
 	}

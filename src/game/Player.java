@@ -12,9 +12,9 @@ public class Player extends GameObject implements Entity{
 	private String username;
 	private InetAddress address; 
 	private int port;
-	private KeyInput input = null;
+	private KeyInputHandler input = null;
 	
-	public Player(double x, double y, String username, KeyInput input, Texture texture, InetAddress address, int port){
+	public Player(double x, double y, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
 		super(x, y);
 		this.username = username;
 		this.input = input;
@@ -114,7 +114,7 @@ public class Player extends GameObject implements Entity{
 		return port;
 	}
 	
-	public KeyInput getInput(){
+	public KeyInputHandler getInput(){
 		return input;
 	}
 }

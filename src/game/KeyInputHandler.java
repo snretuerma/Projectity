@@ -3,11 +3,11 @@ package game;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class KeyInput extends KeyAdapter{
+public class KeyInputHandler extends KeyAdapter{
 	
 	Game game;
 	
-	public KeyInput(Game game){
+	public KeyInputHandler(Game game){
 		this.game = game;
 		game.addKeyListener(this);
 	}

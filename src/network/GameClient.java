@@ -8,10 +8,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import game.Game;
-import game.KeyInput;
+import game.KeyInputHandler;
 import game.NetworkPlayer;
 import game.Texture;
 import network.packets.ConnectPacket;
+import network.packets.DisconnectPacket;
 import network.packets.Packet;
 import network.packets.Packet.PacketTypes;
 
@@ -20,7 +21,7 @@ public class GameClient extends Thread{
 	private DatagramSocket socket;
 	private Game game;
 	
-	public GameClient(Game game, String address, KeyInput input, Texture texture){
+	public GameClient(Game game, String address, KeyInputHandler input, Texture texture){
 		this.game = game;
 		try {
 			this.socket = new DatagramSocket();
@@ -73,16 +74,13 @@ public class GameClient extends Thread{
 				packet = new ConnectPacket(data);
 				System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Joined");
 				NetworkPlayer netplayer = new NetworkPlayer(100.0, 100.0, ((ConnectPacket) packet).getUsername(),game.input, game.texture, address, port);
-				game.controller.addEntity(netplayer);
-//				if(netplayer != null){
-//					this.playerList.add(netplayer);
-//					game.controller.addEntity(netplayer);
-//					game.player = netplayer;
-//				}
-				
+				game.controller.addEntity(netplayer);				
 				break;
 				
 			case DISCONNECT:
+				packet = new DisconnectPacket(data);
+				System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + ((DisconnectPacket) packet).getUsername() + " left");
+				game.controller.removePlayerEntity(((DisconnectPacket) packet).getUsername());
 				break;
 				
 			default: 
