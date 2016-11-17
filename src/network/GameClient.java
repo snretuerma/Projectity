@@ -68,9 +68,7 @@ public class GameClient extends Thread{
 			
 			case CONNECT:
 				packet = new ConnectPacket(data);
-				System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Joined");
-				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, ((ConnectPacket) packet).getUsername(),game.input, game.texture, address, port);
-				game.controller.addEntity(netplayer);				
+				handleConnect((ConnectPacket)packet, address, port);
 				break;
 				
 			case DISCONNECT:
@@ -89,6 +87,12 @@ public class GameClient extends Thread{
 		}
 	}
 	
+	// client side handler of data connection
+	private void handleConnect(ConnectPacket packet, InetAddress address, int port){
+		System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + packet.getUsername() + " Joined");
+		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(),  packet.getUsername(),game.input, game.texture, address, port);
+		game.controller.addEntity(netplayer);	
+	}
 	
 	private void handleState(StatePacket packet){
 		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY());

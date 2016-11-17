@@ -1,11 +1,10 @@
 package game;
 
 import java.awt.Graphics;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class GameController {
-	private LinkedList<Entity> entityList = new LinkedList<Entity>();
-	Entity entity;
+	private ArrayList<Entity> entityList = new ArrayList<Entity>();
 	
 	private Texture texture;
 	private Game game;
@@ -17,45 +16,48 @@ public class GameController {
 		this.texture = texture;
 	}
 	
+	// for thread safe access of the entity list
+	public synchronized ArrayList<Entity> getEntityList(){
+		return entityList;
+	}
+	
 	public void update(){
-		for(int i = 0; i < entityList.size(); i++){
+		for(Entity entity : getEntityList()){
 			if(input!=null){
-				entity = entityList.get(i);
 				entity.update();
 			}
-			
 		}
 	}
 	
 	public void render(Graphics g){
-		for(int i = 0; i < entityList.size(); i++){
-			entity = entityList.get(i);
+		for(Entity entity : getEntityList()){
 			entity.render(g);
 		}
+	
 	}
 	
 	public void addEntity(Entity e){
-		entityList.add(e);
+		getEntityList().add(e);
 	}
 	
 	public void removeEntity(Entity e){
-		entityList.remove(e);
+		getEntityList().remove(e);
 	}
 	
 	public void removePlayerEntity(String username){
 		int index = 0;
-		for(Entity e : entityList){
+		for(Entity e : getEntityList()){
 			if(e instanceof NetworkPlayer &&((NetworkPlayer) e).getUsername().equals(username)){
 				break;
 			}
 			index++;
 		}
-		this.entityList.remove(index);
+		this.getEntityList().remove(index);
 	}
 	
 	private int getPlayerIndex(String username){
 		int index = 0;
-		for(Entity e : entityList){
+		for(Entity e : getEntityList()){
 			if(e instanceof NetworkPlayer &&((NetworkPlayer) e).getUsername().equals(username)){
 				break;
 			}
@@ -66,8 +68,8 @@ public class GameController {
 	
 	public void setState(String username, double x, double y){
 		int index = getPlayerIndex(username);
-		this.entityList.get(index).setX(x);
-		this.entityList.get(index).setY(y);
+		this.getEntityList().get(index).setX(x);
+		this.getEntityList().get(index).setY(y);
 	}
 	
 }

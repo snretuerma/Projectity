@@ -12,13 +12,18 @@ public class ConnectPacket extends Packet{
 	// for data retrieval
 	public ConnectPacket(byte[] data) {
 		super(1);
-		this.username = readData(data);
+		String[] stateData = readData(data).split("/");
+		this.username = stateData[0];
+		this.x = Double.parseDouble(stateData[1]);
+		this.y = Double.parseDouble(stateData[2]);
 	}
 	
 	// when sending from client when instantiated
-	public ConnectPacket(String username){
+	public ConnectPacket(String username, double x, double y){
 		super(1);
 		this.username = username;
+		this.x = x; 
+		this.y = y;
 	}
 	
 	@Override
@@ -32,11 +37,27 @@ public class ConnectPacket extends Packet{
 
 	@Override
 	public byte[] getData() {
-		return ("1"+this.username).getBytes();
+		return ("1"+this.username+"/"+getX()+"/"+getY()).getBytes();
 	}
 	
 	
 	public String getUsername(){
 		return username;
+	}
+	
+	public double getX(){
+		return this.x;
+	}
+	
+	public double getY(){
+		return this.y;
+	}
+	
+	public void setX(double x){
+		this.x = x;
+	}
+	
+	public void setY(double y){
+		this.y = y;
 	}
 }

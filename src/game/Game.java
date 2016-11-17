@@ -67,10 +67,10 @@ public class Game extends Canvas implements Runnable{
 		this.input = new KeyInputHandler(this);
 		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
-		player = new NetworkPlayer(game, 200, 200, username, input, texture, null, -1);
+		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), username, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
 		controller.addEntity(player);
-		ConnectPacket  packet = new ConnectPacket(username);
+		ConnectPacket  packet = new ConnectPacket(username, player.getX(), player.getY());
 		if(server!=null){
 			server.addConnection((NetworkPlayer) player, packet);
 		}
@@ -115,7 +115,7 @@ public class Game extends Canvas implements Runnable{
 	public void run() {
 		init();
 		long prevtime = System.nanoTime();
-		final double maxfps = 60.0;
+		final double maxfps = 80.0;
 		double nsec = 1000000000/maxfps;
 		double delta = 0;
 		int frames = 0;

@@ -75,7 +75,7 @@ public class GameServer extends Thread{
 			
 			case STATE:
 				packet = new StatePacket(data);
-				System.out.println(((StatePacket)packet).getUsername() + " moved " + ((StatePacket)packet).getX() + ", " + ((StatePacket)packet).getY() );
+				//System.out.println(((StatePacket)packet).getUsername() + " moved " + ((StatePacket)packet).getX() + ", " + ((StatePacket)packet).getY() );
 				this.handleState((StatePacket)packet);
 				break;
 				
@@ -118,9 +118,10 @@ public class GameServer extends Thread{
 			}				
 			else{
 //				ConnectPacket loginPacket = new ConnectPacket(p.getUsername());
+				// send packet containing the new players data
 				send(packet.getData(), p.getAddress(), p.getPort());
-				// send the player data to the server
-				packet = new ConnectPacket(p.getUsername());
+				// send a packet to the new player about the existing player
+				packet = new ConnectPacket(p.getUsername(),p.getX(),p.getY());
 				send(packet.getData(), player2.getAddress(), player2.getPort());
 			}	
 		}
