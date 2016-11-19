@@ -33,11 +33,10 @@ public class Game extends Canvas implements Runnable{
 	private boolean shooting = false;
 	
 	public Texture texture = null;
-	public Player player = null;
+	public Player player;
 	public GameController controller = null;
 	public KeyInputHandler input = null;
 	public WindowHandler windowHandler;
-	private String username;
 	
 	/** Network Sample **/ 
 	public GameClient client = null;
@@ -67,16 +66,19 @@ public class Game extends Canvas implements Runnable{
 		this.input = new KeyInputHandler(this);
 		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
+		String username = JOptionPane.showInputDialog(this, "Username");
 		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), username, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
 		controller.addEntity(player);
 		ConnectPacket  packet = new ConnectPacket(username, player.getX(), player.getY());
-		if(server!=null){
+		
+		if(server != null){
 			server.addConnection((NetworkPlayer) player, packet);
 		}
 		packet.writeData(client);
 		
 	} 
+	
 	private synchronized void start(){ 
 		if(running ){
 			return;
@@ -84,16 +86,13 @@ public class Game extends Canvas implements Runnable{
 		running = true;
 		thread = new Thread(this);
 		thread.start();
-		
+		//int option = JOptionPane.showConfirmDialog(this, "Create Server");
 		if(JOptionPane.showConfirmDialog(this, "Create Server") == 0){
 			server = new GameServer(this, texture, input, controller, player);
 			server.start();
-		}
-		
+		} 	
 		client = new GameClient(this, "localhost", input, texture);
-        client.start();		  
-      
-      	username = JOptionPane.showInputDialog(this, "Username");
+	    client.start();		  
 	}
 	
 	private synchronized void stop(){
@@ -231,6 +230,9 @@ public class Game extends Canvas implements Runnable{
 		return spriteSheet;
 	}
 	
+	public GameController getGameController(){
+		return this.controller;
+	}
 	
 	public static void main(String[] args){
 		Game game = new Game();

@@ -62,9 +62,9 @@ public class GameServer extends Thread{
 			
 			case CONNECT:
 				packet = new ConnectPacket(data);
-				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
 				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
-				this.addConnection(netplayer, (ConnectPacket) packet);				
+				this.addConnection(netplayer, (ConnectPacket) packet);
+				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
 				break;
 				
 			case DISCONNECT:
@@ -97,36 +97,36 @@ public class GameServer extends Thread{
 	
 	// broadcast message of a client to all the connected clients
 	public void broadcast(byte[] data){
-		for(NetworkPlayer player : playerList){
-			send(data, player.getAddress(), player.getPort());
+		for(NetworkPlayer nplayer : playerList){
+			send(data, nplayer.getAddress(), nplayer.getPort());
 		}
 	}
 
-	public void addConnection(NetworkPlayer player2, ConnectPacket packet) {
+	public void addConnection(NetworkPlayer netpl, ConnectPacket packet) {
 		boolean connected = false;
-//		System.out.println("Size: " + playerList.size() + " Port: " + player2.getPort() + " Username: " + player2.getUsername());
-		for(NetworkPlayer p : playerList){
-			if(player2.getUsername().equalsIgnoreCase(p.getUsername())){
+		//System.out.println("\n|addConnection() method debug print| \n Size: " + playerList.size() + " Port: " + netpl.getPort() + " Username: " + netpl.getUsername() + "\n");
+		for(NetworkPlayer p : this.playerList){
+			if(netpl.getUsername().equalsIgnoreCase(p.getUsername())){
 				if(p.getAddress() == null){
-					p.setAddress(player2.getAddress());
+					p.setAddress(netpl.getAddress());
 				}
 				
 				if(p.getPort() == -1){
-					p.setPort(player2.getPort());
+					p.setPort(netpl.getPort());
 				}
 				connected = true;
 			}				
 			else{
-//				ConnectPacket loginPacket = new ConnectPacket(p.getUsername());
-				// send packet containing the new players data
+				// send packet containing the new players data to the current player in the iteration
 				send(packet.getData(), p.getAddress(), p.getPort());
+
 				// send a packet to the new player about the existing player
-				packet = new ConnectPacket(p.getUsername(),p.getX(),p.getY());
-				send(packet.getData(), player2.getAddress(), player2.getPort());
+				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY());
+				send(pack.getData(), netpl.getAddress(), netpl.getPort());
 			}	
 		}
 		if(!connected){
-			this.playerList.add(player2);
+			this.playerList.add(netpl);
 		}
 	}
 	

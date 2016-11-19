@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import game.Entity;
 import game.Game;
 import game.KeyInputHandler;
 import game.NetworkPlayer;
@@ -57,7 +58,7 @@ public class GameClient extends Thread{
 	}
 	
 	
-	private void parsePacket(byte[] data, InetAddress address, int port) {
+	private void parsePacket(byte[] data, InetAddress pAddress, int pPort) {
 		String message = new String(data).trim();
 //		System.out.println("Packet Message: " + message + " | Packet Type: " + Integer.parseInt(message.substring(0, 1)));
 		PacketTypes type = Packet.findPacket(Integer.parseInt(message.substring(0,1)));
@@ -68,12 +69,12 @@ public class GameClient extends Thread{
 			
 			case CONNECT:
 				packet = new ConnectPacket(data);
-				handleConnect((ConnectPacket)packet, address, port);
+				handleConnect((ConnectPacket)packet, pAddress, pPort);
 				break;
 				
 			case DISCONNECT:
 				packet = new DisconnectPacket(data);
-				System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + ((DisconnectPacket) packet).getUsername() + " left");
+				System.out.println("CLIENT >> [" +pAddress.getHostAddress()+" : " + pPort +"] " + ((DisconnectPacket) packet).getUsername() + " left");
 				game.controller.removePlayerEntity(((DisconnectPacket) packet).getUsername());
 				break;
 			
@@ -88,10 +89,12 @@ public class GameClient extends Thread{
 	}
 	
 	// client side handler of data connection
-	private void handleConnect(ConnectPacket packet, InetAddress address, int port){
-		System.out.println("CLIENT >> [" +address.getHostAddress()+" : " + port +"] " + packet.getUsername() + " Joined");
-		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(),  packet.getUsername(),game.input, game.texture, address, port);
-		game.controller.addEntity(netplayer);	
+	private void handleConnect(ConnectPacket packet, InetAddress pAddress, int pPort){
+		System.out.println("CLIENT >> [" +pAddress.getHostAddress()+" : " + pPort +"] " + packet.getUsername() + " Joined");
+		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(),  packet.getUsername(),game.input, game.texture, address, pPort);
+		// adds the other connected player to the client's entity list
+		game.getGameController().getEntityList().add(netplayer);
+		
 	}
 	
 	private void handleState(StatePacket packet){

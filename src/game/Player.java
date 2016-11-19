@@ -12,9 +12,11 @@ public class Player extends GameObject implements Entity{
 	private Texture texture = null;
 	private char direction = 'u';
 	private String username;
-	private InetAddress address; 
-	private int port;
+	public InetAddress address; 
+	public int port;
 	private KeyInputHandler input = null;
+	private double prevX;
+	private double prevY;
 	
 	public Player(Game game, double x, double y, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
 		super(game, x, y);
@@ -23,6 +25,8 @@ public class Player extends GameObject implements Entity{
 		this.texture = texture;
 		this.address = address;
 		this.port = port;
+		this.prevX = x;
+		this.prevY = y;
 	}
 	
 	public void update(){
@@ -31,6 +35,14 @@ public class Player extends GameObject implements Entity{
 			x+=velocityX;
 			y+=velocityY;
 			
+			// send packet only when there are movements in the player
+			if(prevX != x || prevY != y){
+				prevX = x;
+				prevY = y;
+				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y);
+				packet.writeData(game.client);
+			}
+			
 			// for window boundary detection
 			if(x <= 0) x = 0;
 			if(x>=757) x=757;
@@ -38,13 +50,12 @@ public class Player extends GameObject implements Entity{
 			if(y >= 555) y = 555;
 //		}
 			
-			StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y);
-			packet.writeData(game.client);
+			
+			
 	}
 	
 	public void render(Graphics g){
 		g.drawImage(texture.player, (int)x, (int)y, null);
-		
 	}
 	
 	public void setX(double x){

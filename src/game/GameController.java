@@ -23,9 +23,7 @@ public class GameController {
 	
 	public void update(){
 		for(Entity entity : getEntityList()){
-			if(input!=null){
-				entity.update();
-			}
+			entity.update();
 		}
 	}
 	
@@ -36,15 +34,23 @@ public class GameController {
 	
 	}
 	
-	public void addEntity(Entity e){
+	public void addEntity(Entity e){		
 		getEntityList().add(e);
+		
+//		System.out.println("Entity Added, Updated values Size: " + getEntityList().size());
+//		System.out.println("Player List");
+//		for(Entity b : getEntityList()){
+//			if(e instanceof NetworkPlayer){
+//				System.out.println(((NetworkPlayer) b).getUsername());
+//			}
+//		}
 	}
 	
 	public void removeEntity(Entity e){
 		getEntityList().remove(e);
 	}
 	
-	public void removePlayerEntity(String username){
+	public synchronized void removePlayerEntity(String username){
 		int index = 0;
 		for(Entity e : getEntityList()){
 			if(e instanceof NetworkPlayer &&((NetworkPlayer) e).getUsername().equals(username)){

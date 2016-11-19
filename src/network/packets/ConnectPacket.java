@@ -42,7 +42,7 @@ public class ConnectPacket extends Packet{
 	
 	
 	public String getUsername(){
-		return username;
+		return this.username;
 	}
 	
 	public double getX(){
