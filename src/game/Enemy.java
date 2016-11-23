@@ -1,9 +1,11 @@
 package game;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class Enemy implements Entity{
 	private double x, y;
+	private int type;
 	private Texture texture = null;
 	
 	public Enemy(double x, double y, Texture texture){
@@ -36,5 +38,21 @@ public class Enemy implements Entity{
 	@Override
 	public void setY(double y) {
 		this.y = y;
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getType() {
+		return this.type;
+	}
+
+	@Override
+	public void setType(int type) {
+		this.type = type;
 	}
 }

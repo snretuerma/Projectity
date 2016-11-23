@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -67,10 +68,10 @@ public class Game extends Canvas implements Runnable{
 		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
 		String username = JOptionPane.showInputDialog(this, "Username");
-		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), username, input, texture, null, -1);
+		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), 'u', 100, 0, username, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
 		controller.addEntity(player);
-		ConnectPacket  packet = new ConnectPacket(username, player.getX(), player.getY());
+		ConnectPacket  packet = new ConnectPacket(username, player.getX(), player.getY(), player.getDirection(), player.getHealth(), player.getType());
 		
 		if(server != null){
 			server.addConnection((NetworkPlayer) player, packet);
@@ -174,6 +175,12 @@ public class Game extends Canvas implements Runnable{
 		 graphics.drawImage(background, 0, 0, null);
 		 player.render(graphics);
 		 controller.render(graphics);
+		 graphics.setColor(Color.gray);
+		 graphics.fillRect((int)player.getX()-9, (int)player.getY()-15, 50, 5);
+		 graphics.setColor(Color.green);
+		 graphics.fillRect((int)player.getX()-9, (int)player.getY()-15, (int)player.getHealth()/2, 5);
+		 graphics.setColor(Color.white);
+		 graphics.drawRect((int)player.getX()-9, (int)player.getY()-15, 50, 5);
 		 ///////////////////////////////////////////////////
 		 graphics.dispose();
 		 bufferStrategy.show();
@@ -184,20 +191,22 @@ public class Game extends Canvas implements Runnable{
 		int key = e.getKeyCode();
 		
 		if(key == KeyEvent.VK_RIGHT){
-			player.setVelocityX(3);
+			player.setVelocityX(1);
 			player.setDirection('r');
 		}else if(key == KeyEvent.VK_LEFT){
-			player.setVelocityX(-3);
+			player.setVelocityX(-1);
 			player.setDirection('l');
 		}else if(key == KeyEvent.VK_DOWN){
-			player.setVelocityY(3);
+			player.setVelocityY(1);
 			player.setDirection('d');
 		}else if(key == KeyEvent.VK_UP){
-			player.setVelocityY(-3);
+			player.setVelocityY(-1);
 			player.setDirection('u');
 		}else if(key == KeyEvent.VK_SPACE && !shooting){
 			shooting = true;
-			controller.addEntity(new Bullet(player.getX(), player.getY(), texture, player.getDirection()));
+			//@ TODO fire projectile - set another entity for bullet?
+			
+			//controller.addEntity(new Bullet(player.getX(), player.getY(), texture, player.getDirection(), player.getType()));
 		}
 	}
 	

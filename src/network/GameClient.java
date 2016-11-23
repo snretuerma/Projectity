@@ -91,13 +91,15 @@ public class GameClient extends Thread{
 	// client side handler of data connection
 	private void handleConnect(ConnectPacket packet, InetAddress pAddress, int pPort){
 		System.out.println("CLIENT >> [" +pAddress.getHostAddress()+" : " + pPort +"] " + packet.getUsername() + " Joined");
-		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(),  packet.getUsername(),game.input, game.texture, address, pPort);
+		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getType(), packet.getUsername(),game.input, game.texture, address, pPort);
 		// adds the other connected player to the client's entity list
-		game.getGameController().getEntityList().add(netplayer);
-		
+		//netplayer.setType(1);
+		//System.out.println("Username : " + netplayer.getUsername() + " Type: " + netplayer.getType());
+		//game.getGameController().getEntityList().add(netplayer);
+		game.controller.addEntity(netplayer);
 	}
 	
 	private void handleState(StatePacket packet){
-		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY());
+		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getType());
 	}
 }

@@ -8,6 +8,9 @@ public class StatePacket extends Packet{
 	private String username = null;
 	private double y;
 	private double x;
+	private char direction;
+	private float health;
+	private int type;
 	
 	// for data retrieval
 	public StatePacket(byte[] data) {
@@ -16,14 +19,20 @@ public class StatePacket extends Packet{
 		this.username = stateData[0];
 		this.x = Double.parseDouble(stateData[1]);
 		this.y = Double.parseDouble(stateData[2]);
+		this.direction = stateData[3].charAt(0);
+		this.health = Float.parseFloat(stateData[4]);
+		this.type = Integer.parseInt(stateData[5]);
 	}
 	
 	// when sending from client when instantiated
-	public StatePacket(String username, double x, double y){
+	public StatePacket(String username, double x, double y, char direction, float health, int type){
 		super(3);
 		this.username = username;
 		this.x = x;
 		this.y = y;
+		this.direction = direction;
+		this.health = health;
+		this.type = type;
 	}
 	
 	@Override
@@ -37,7 +46,7 @@ public class StatePacket extends Packet{
 
 	@Override
 	public byte[] getData() {
-		return ("3"+this.username+'/'+this.x+'/'+this.y).getBytes();
+		return ("3"+this.username+'/'+this.x+'/'+this.y+"/"+getDirection()+"/"+getHealth()+"/"+getType()).getBytes();
 	}
 	
 	
@@ -53,4 +62,27 @@ public class StatePacket extends Packet{
 		return this.y;
 	}
 	
+	public char getDirection(){
+		return this.direction;
+	}
+	
+	public void setDirection(char direction){
+		this.direction = direction;
+	}
+	
+	public float getHealth() {
+		return this.health;
+	}
+	
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public int getType() {
+		return this.type;
+	}
+	
+	public void setType(int type){
+		this.type = type;
+	}
 }

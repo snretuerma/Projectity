@@ -35,15 +35,20 @@ public class GameController {
 	}
 	
 	public void addEntity(Entity e){		
+//		if(game.player.getUsername()!=((Player) e).getUsername()){
+//			
+//			((Player) e).setType(1);
+//			System.out.println("Added Username: " + ((Player) e).getUsername() + "| Class type: " + ((Player) e).getType());
+//		}
 		getEntityList().add(e);
 		
-//		System.out.println("Entity Added, Updated values Size: " + getEntityList().size());
 //		System.out.println("Player List");
 //		for(Entity b : getEntityList()){
-//			if(e instanceof NetworkPlayer){
-//				System.out.println(((NetworkPlayer) b).getUsername());
+//			if(b instanceof NetworkPlayer){
+//				System.out.println(((NetworkPlayer) b).getUsername() + " Class type: " + ((NetworkPlayer) b).getType());
 //			}
 //		}
+//		
 	}
 	
 	public void removeEntity(Entity e){
@@ -72,10 +77,17 @@ public class GameController {
 		return index;
 	}
 	
-	public void setState(String username, double x, double y){
+	
+	
+	public void setState(String username, double x, double y, char direction, float health, int type){
 		int index = getPlayerIndex(username);
 		this.getEntityList().get(index).setX(x);
 		this.getEntityList().get(index).setY(y);
+		((NetworkPlayer) this.getEntityList().get(index)).setDirection(direction);
+		((NetworkPlayer) this.getEntityList().get(index)).setHealth(health);
+		((NetworkPlayer) this.getEntityList().get(index)).setType(type);
+		
+
 	}
 	
 }

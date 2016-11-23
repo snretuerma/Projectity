@@ -1,18 +1,20 @@
 package game;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class Bullet implements Entity{
 	private double x;
 	private double y;
 	private char direction;
 	private Texture texture = null;
-	
-	public Bullet(double x, double y, Texture texture, char direction){
+	private int type;
+	public Bullet(double x, double y, Texture texture, char direction, int type){
 		this.x = x;
 		this.y = y;
 		this.texture = texture;
 		this.direction = direction;
+		this.type = type;
 	}
 
 	public void update(){
@@ -51,4 +53,19 @@ public class Bullet implements Entity{
 		this.y = y;
 		
 	}
+	
+	public Rectangle getBounds(){
+		return new Rectangle((int)x, (int)y, 32, 32);
+	}
+	
+	@Override
+	public int getType() {
+		return this.type;
+	}
+
+	@Override
+	public void setType(int type) {
+		this.type = type;
+	}
+	
 }

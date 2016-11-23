@@ -7,8 +7,8 @@ import chat.ChatGUI;
 import game.Game;
 
 @SuppressWarnings("serial")
-public class GameLoader extends JFrame{
-	public GameLoader(){
+public class GameLauncher extends JFrame{
+	public GameLauncher(){
 		super("TANK2D");
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -18,10 +18,17 @@ public class GameLoader extends JFrame{
 		Game game = new Game();
 		gamePanel.add(game);
 		
+		JPanel chatpane = new JPanel();
+		chatpane.setPreferredSize(new Dimension(300, 1000));
 		ChatGUI chat = new ChatGUI();
+		chatpane.add(chat);
 		this.add(gamePanel);
-		this.add(chat);
+		this.add(chatpane);
 		this.pack();
 		this.setLocationRelativeTo(null);
+	}
+	
+	public static void main(String[] args){
+		new GameLauncher();
 	}
 }

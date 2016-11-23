@@ -22,7 +22,7 @@ import network.packets.StatePacket;
 public class GameServer extends Thread{
 	private DatagramSocket socket;
 	private Game game;
-	ArrayList<NetworkPlayer> playerList = new ArrayList<NetworkPlayer>();
+	public ArrayList<NetworkPlayer> playerList = new ArrayList<NetworkPlayer>();
 	GameController controller;
 	Player player;
 	
@@ -62,7 +62,7 @@ public class GameServer extends Thread{
 			
 			case CONNECT:
 				packet = new ConnectPacket(data);
-				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
+				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, 'u', 100, 0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
 				this.addConnection(netplayer, (ConnectPacket) packet);
 				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
 				break;
@@ -75,7 +75,7 @@ public class GameServer extends Thread{
 			
 			case STATE:
 				packet = new StatePacket(data);
-				//System.out.println(((StatePacket)packet).getUsername() + " moved " + ((StatePacket)packet).getX() + ", " + ((StatePacket)packet).getY() );
+				//System.out.println(((StatePacket)packet).getUsername() + " moved " + ((StatePacket)packet).getX() + ", " + ((StatePacket)packet).getY() +", "+ ((StatePacket)packet).getDirection() + ", " + ((StatePacket)packet).getHealth() + ", " + ((StatePacket) packet).getType());
 				this.handleState((StatePacket)packet);
 				break;
 				
@@ -121,7 +121,8 @@ public class GameServer extends Thread{
 				send(packet.getData(), p.getAddress(), p.getPort());
 
 				// send a packet to the new player about the existing player
-				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY());
+				//p.setType(1);
+				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY(),p.getDirection(), p.getHealth(), p.getType());
 				send(pack.getData(), netpl.getAddress(), netpl.getPort());
 			}	
 		}

@@ -11,12 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.SlickException;
-
 import chat.ChatGUI;
-import gamesetup.Game;
-import gamesetup.GameServer;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame implements ActionListener{
@@ -110,7 +105,7 @@ public class Main extends JFrame implements ActionListener{
 				}else{
 					System.out.println("Username: " + usernameField.getText());
 					this.dispose();
-					new GameLoader();
+					new GameLauncher();
 				}
 				
 			}
