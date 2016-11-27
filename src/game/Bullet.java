@@ -8,13 +8,14 @@ public class Bullet implements Entity{
 	private double y;
 	private char direction;
 	private Texture texture = null;
-	private int type;
-	public Bullet(double x, double y, Texture texture, char direction, int type){
+	private String username;
+	
+	public Bullet(double x, double y, Texture texture, char direction, String username){
 		this.x = x;
 		this.y = y;
 		this.texture = texture;
 		this.direction = direction;
-		this.type = type;
+		this.username = username;
 	}
 
 	public void update(){
@@ -57,15 +58,20 @@ public class Bullet implements Entity{
 	public Rectangle getBounds(){
 		return new Rectangle((int)x, (int)y, 32, 32);
 	}
-	
-	@Override
-	public int getType() {
-		return this.type;
+
+	public String getUsername() {
+		return this.username;
 	}
 
-	@Override
-	public void setType(int type) {
-		this.type = type;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
+	public char getDirection(){
+		return this.direction;
+	}
+	
+	public void setDirection(char direction){
+		this.direction = direction;
+	}
 }

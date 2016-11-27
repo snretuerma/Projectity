@@ -39,17 +39,15 @@ public class Player extends GameObject implements Entity{
 			// for smoother movement
 			x+=velocityX;
 			y+=velocityY;
-
-			// send packet only when there are movements in the player
-			if(prevX != x || prevY != y){
+			float damage = hasCollided();
+			
+			// send packet only when there are movements in the player or if the player is damaged
+			if(prevX != x || prevY != y || damage > 0 || this.health == 0){
 				prevX = x;
 				prevY = y;
-				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y, this.direction, this.health, this.type);
-				packet.writeData(game.client);					
-			}
-			
-			if(game.getGameController().getEntityList().size() > 1){
-				if(hasCollided() == 1){
+				
+				// for player collision damage
+				if(damage == (float)0.2){
 					if(this.direction == 'u'){
 						//this.direction = 'd';
 						this.y = y + 5;
@@ -67,11 +65,22 @@ public class Player extends GameObject implements Entity{
 						this.y = y + 2;
 						this.x = x + 5;
 					}
-					this.health -=0.2;
-					//System.out.println("Collision Detected | ("+ x+ "," + y +") | " +"("+ prevX + "," + prevY+") " + "Current HP: " + this.health + " Direction: " + this.direction);
+					this.health -=damage;
+				
+				// for projectile damage
+				}else if(damage == (float)5.0){
+					this.health -=5;
+					System.out.println(this.username + " (" +this.health+") was hit");					
 				}
+				
+				if(this.health == 0){
+					respawn();
+				}
+				
+				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y, this.direction, this.health, this.type);
+				packet.writeData(game.client);					
 			}
-			
+					
 			// for window boundary detection
 			if(x <= 0) x = 0;
 			if(x>=757) x=757;
@@ -79,11 +88,16 @@ public class Player extends GameObject implements Entity{
 			if(y >= 555) y = 555;
 			
 	}
-	
+
 	public void render(Graphics g){
 		g.drawImage(texture.enemy, (int)x, (int)y, null);
 		// @ TODO render different texture for enemy players to differentiate player controlled unit
-	
+		 g.setColor(Color.gray);
+		 g.fillRect((int)this.x-9, (int)this.y-15, 50, 5);
+		 g.setColor(Color.green);
+		 g.fillRect((int)this.x-9, (int)this.y-15, (int)this.health/2, 5);
+		 g.setColor(Color.white);
+		 g.drawRect((int)this.x-9, (int)this.y-15, 50, 5);
 	}
 	
 	public void setX(double x){
@@ -134,20 +148,25 @@ public class Player extends GameObject implements Entity{
 		this.health = health;
 	}
 	
-	public int hasCollided(){
-		if(GamePhysics.collision(this, this.game.getGameController().getEntityList())){
-			return 1;
-		}
-		return 0;
+	public float hasCollided(){
+		return GamePhysics.collision(this, this.game.getGameController().getEntityList());
 	}
-		
+	
+	private void respawn() {
+		this.health = 100;
+		this.y = game.randomPosition(game.height*game.scale);
+		this.x = game.randomPosition(game.width*game.scale);
+		this.direction = 'd';
+	}
+	
 	public String getState(){
 		String state = "";
-		state+=getX()+"/";
-		state+=getY()+"/";
-		state+=getDirection();
-		
-		// @TODO add health to player state
+		state+=this.username+"/";
+		state+=this.x+"/";
+		state+=this.y+"/";
+		state+=this.direction+"/";
+		state+=this.health+"/";
+		state+=this.type;
 		
 		return state;
 	}
@@ -155,6 +174,10 @@ public class Player extends GameObject implements Entity{
 	
 	public String getUsername(){
 		return username;
+	}
+	
+	public void setUsername(String username){
+		this.username = username;
 	}
 	
 	public void setType(int type){

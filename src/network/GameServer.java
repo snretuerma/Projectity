@@ -121,7 +121,6 @@ public class GameServer extends Thread{
 				send(packet.getData(), p.getAddress(), p.getPort());
 
 				// send a packet to the new player about the existing player
-				//p.setType(1);
 				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY(),p.getDirection(), p.getHealth(), p.getType());
 				send(pack.getData(), netpl.getAddress(), netpl.getPort());
 			}	

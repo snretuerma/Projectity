@@ -7,7 +7,6 @@ import network.packets.DisconnectPacket;
 
 public class WindowHandler implements WindowListener{
 	private final Game game;
-	
 	public WindowHandler(Game game){
 		this.game = game;
 		this.game.frame.addWindowListener(this);

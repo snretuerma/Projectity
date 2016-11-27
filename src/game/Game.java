@@ -175,12 +175,12 @@ public class Game extends Canvas implements Runnable{
 		 graphics.drawImage(background, 0, 0, null);
 		 player.render(graphics);
 		 controller.render(graphics);
-		 graphics.setColor(Color.gray);
-		 graphics.fillRect((int)player.getX()-9, (int)player.getY()-15, 50, 5);
-		 graphics.setColor(Color.green);
-		 graphics.fillRect((int)player.getX()-9, (int)player.getY()-15, (int)player.getHealth()/2, 5);
-		 graphics.setColor(Color.white);
-		 graphics.drawRect((int)player.getX()-9, (int)player.getY()-15, 50, 5);
+//		 graphics.setColor(Color.gray);
+//		 graphics.fillRect((int)player.getX()-9, (int)player.getY()-15, 50, 5);
+//		 graphics.setColor(Color.green);
+//		 graphics.fillRect((int)player.getX()-9, (int)player.getY()-15, (int)player.getHealth()/2, 5);
+//		 graphics.setColor(Color.white);
+//		 graphics.drawRect((int)player.getX()-9, (int)player.getY()-15, 50, 5);
 		 ///////////////////////////////////////////////////
 		 graphics.dispose();
 		 bufferStrategy.show();
@@ -206,7 +206,11 @@ public class Game extends Canvas implements Runnable{
 			shooting = true;
 			//@ TODO fire projectile - set another entity for bullet?
 			
-			//controller.addEntity(new Bullet(player.getX(), player.getY(), texture, player.getDirection(), player.getType()));
+			controller.addEntity(new Bullet(player.getX(), player.getY(), texture, player.getDirection(), player.getUsername()));
+			
+//			for(Entity a : controller.getEntityList()){
+//				System.out.println(a.getUsername());;
+//			}
 		}
 	}
 	

@@ -13,8 +13,8 @@ public interface Entity {
 	public double getY();
 	public void setX(double x);
 	public void setY(double y);
-	public int getType();
-	public void setType(int type);
+	public String getUsername();
+	public void setUsername(String username);
 	public Rectangle getBounds();
 
 }
