@@ -21,16 +21,19 @@ public class Player extends GameObject implements Entity{
 	private double prevX;
 	private double prevY;
 	private float health;
+	private int score;
 	private int status;
+	private String lastCollided = null;
 	private ArrayList<Bullet> projectile = new ArrayList<Bullet>();
 	
-	public Player(Game game, double x, double y, char direction, float health, int status, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
+	public Player(Game game, double x, double y, char direction, float health, int status, String username, int score, KeyInputHandler input, Texture texture, InetAddress address, int port){
 		super(game, x, y);
 		this.username = username;
 		this.input = input;
 		this.texture = texture;
 		this.address = address;
 		this.port = port;
+		this.score = score;
 		this.prevX = x;
 		this.prevY = y;
 		this.direction = direction;
@@ -86,7 +89,7 @@ public class Player extends GameObject implements Entity{
 					respawn();
 				}
 				
-				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y, this.direction, this.health, this.status);
+				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y, this.direction, this.health, this.status, this.score);
 				packet.writeData(game.client);
 				
 			}
@@ -106,8 +109,19 @@ public class Player extends GameObject implements Entity{
 	}
 
 	public void render(Graphics g){
-		g.drawImage(texture.enemy, (int)x, (int)y, null);
+		if(direction == 'u'){
+			g.drawImage(texture.playerUp, (int)x, (int)y, null);
+		}else if(direction == 'd'){
+			g.drawImage(texture.playerDown, (int)x, (int)y, null);
+		}else if(direction == 'l'){
+			g.drawImage(texture.playerLeft, (int)x, (int)y, null);
+		}else if(direction == 'r'){
+			g.drawImage(texture.playerRight, (int)x, (int)y, null);
+		}
+		
+		
 		// @ TODO render different texture for enemy players to differentiate player controlled unit
+		
 		 g.setColor(Color.gray);
 		 g.fillRect((int)this.x-9, (int)this.y-15, 50, 5);
 		 g.setColor(Color.green);
@@ -175,6 +189,7 @@ public class Player extends GameObject implements Entity{
 		if(GamePhysics.collision(this, this.game.getGameController().getEntityList()) != 0){
 			damage = (float) 0.2;
 		}
+		
 		return damage;
 	}
 	
@@ -182,7 +197,9 @@ public class Player extends GameObject implements Entity{
 		float damage = (float)0;
 		if(GamePhysics.projectileCollision(this, this.game.getGameController().getProjectileList()) != 0){
 			damage = (float) 5;
+			
 		}
+		
 		return damage;
 	}
 	
@@ -220,6 +237,14 @@ public class Player extends GameObject implements Entity{
 	
 	public int getStatus(){
 		return status;
+	}
+	
+	public int getScore(){
+		return this.score;
+	}
+	
+	public void setScore(int score){
+		this.score = score;
 	}
 	
 	public void setAddress(InetAddress address){
@@ -260,4 +285,6 @@ public class Player extends GameObject implements Entity{
 	public Texture getTexture(){
 		return this.texture;
 	}
+	
+	
 }

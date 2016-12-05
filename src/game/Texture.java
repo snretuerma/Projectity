@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 public class Texture {
 	
-	public BufferedImage player, bullet, enemy;
+	public BufferedImage playerUp, playerDown, playerLeft, playerRight, bulletUp, bulletDown, bulletRight, bulletLeft, enemy;
 	private SpriteSheet spritesheet = null;
 	
 	public Texture(Game game){
@@ -17,9 +17,14 @@ public class Texture {
 	}
 	
 	public void getTextures(){
-		player = spritesheet.getImage(1, 1, 32, 32);
-		bullet = spritesheet.getImage(2, 1, 32, 32);
-		enemy = spritesheet.getImage(3, 1, 32, 32);
+		playerUp = spritesheet.getImage(1, 1, 32, 32);
+		playerDown  = spritesheet.getImage(1, 2, 32, 32);
+		playerRight  = spritesheet.getImage(1, 3, 32, 32);
+		playerLeft  = spritesheet.getImage(1, 4, 32, 32);
+		bulletUp = spritesheet.getImage(2, 1, 32, 32);
+		bulletDown = spritesheet.getImage(2, 2, 32, 32);
+		bulletRight = spritesheet.getImage(2, 3, 32, 32);
+		bulletLeft = spritesheet.getImage(2, 4, 32, 32);
 	}
 	
 	

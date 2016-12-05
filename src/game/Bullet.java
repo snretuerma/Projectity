@@ -42,11 +42,20 @@ public class Bullet implements Entity{
 				x-=5;
 			}
 			//ShootPacket packet = new ShootPacket(this.getUsername(), this.getX(), this.getY(), this.getDirection(), this.getIndex());
-		
+			//System.out.println("Bullet user: " + this.username + " X and Y: " + this.x + ", " + this.y);
+			
 	}
 	
 	public void render(Graphics g){
-		g.drawImage(texture.bullet, (int)x, (int)y, null);
+		if(direction == 'u'){
+			g.drawImage(texture.bulletUp, (int)x, (int)y, null);
+		}else if(direction == 'd'){
+			g.drawImage(texture.bulletDown, (int)x, (int)y, null);
+		}else if(direction == 'l'){
+			g.drawImage(texture.bulletLeft, (int)x, (int)y, null);
+		}else if(direction == 'r'){
+			g.drawImage(texture.bulletRight, (int)x, (int)y, null);
+		}
 	}
 	
 	public double getX(){

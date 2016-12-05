@@ -101,13 +101,13 @@ public class GameClient extends Thread{
 	// client side handler of data connection
 	private void handleConnect(ConnectPacket packet, InetAddress pAddress, int pPort){
 		System.out.println("CLIENT >> [" +pAddress.getHostAddress()+" : " + pPort +"] " + packet.getUsername() + " Joined");
-		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus(), packet.getUsername(),game.input, game.texture, address, pPort);
+		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus(), packet.getUsername(), packet.getScore(), game.input, game.texture, address, pPort);
 		// adds the other connected player to the client's entity list
 		game.controller.addEntity(netplayer);
 	}
 	
 	private void handleState(StatePacket packet){
-		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus());
+		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus(), packet.getScore());
 //		if(packet.getStatus() == 1){
 //			System.out.println("State Changed");
 //			game.controller.addProjectile(new Bullet(packet.getX(), packet.getY(), game.texture, packet.getDirection(), packet.getUsername()));

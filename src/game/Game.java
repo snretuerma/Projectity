@@ -1,11 +1,15 @@
 package game;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -13,18 +17,26 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import network.GameClient;
 import network.GameServer;
 import network.packets.ConnectPacket;
 import network.packets.ShootPacket;
 
-public class Game extends Canvas implements Runnable{
+public class Game extends Canvas implements Runnable, ActionListener{
 
 	// Swing components
 	private static final long serialVersionUID = 1L;
@@ -44,6 +56,15 @@ public class Game extends Canvas implements Runnable{
 	public JLabel timerLabel;
 	public JLabel timer;
 	public JLabel playerListLabel;
+	public String[] scoreHeader = {"Player", "Score"};
+	public DefaultTableModel scoreBoardModel = new DefaultTableModel(scoreHeader, 0);;
+	public JTable scoreTable = new JTable(scoreBoardModel);;
+	public JScrollPane scoreScrollPane;
+	
+	public TextArea messageArea;
+	public TextArea inputArea;
+	public JButton sendButton;
+
 	
 	private boolean running = false;
 	private Thread thread;		
@@ -82,17 +103,52 @@ public class Game extends Canvas implements Runnable{
 		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
 		username = JOptionPane.showInputDialog(this, "Username");
-		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), 'u', 100, 0, username, input, texture, null, -1);
+		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), 'u', 100, 0, username, 0, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
 		controller.addEntity(player);
 		
-		ConnectPacket  packet = new ConnectPacket(username, player.getX(), player.getY(), player.getDirection(), player.getHealth(), player.getStatus());
+		ConnectPacket  packet = new ConnectPacket(username, player.getX(), player.getY(), player.getDirection(), player.getHealth(), player.getStatus(), player.getScore());
 		
 		if(server != null){
 			server.addConnection((NetworkPlayer) player, packet);
 		}
 		packet.writeData(client);
-		
+		final ScheduledExecutorService startTimer = Executors.newSingleThreadScheduledExecutor();
+		startTimer.scheduleAtFixedRate(new Runnable() {
+	    	int time = 10;
+	    	@Override
+	        public void run() {
+	    		if(time == 0){
+	    			startTimer.shutdown();
+	    			System.out.println("Start");
+	    		}
+	    		gameTimer(time--);
+	        	
+	        }	
+
+	    	
+	    }, 0, 1, TimeUnit.SECONDS);
+	    try {
+			TimeUnit.SECONDS.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	    
+	    final ScheduledExecutorService gameTimer = Executors.newSingleThreadScheduledExecutor();
+	    gameTimer.scheduleAtFixedRate(new Runnable() {
+	    	int time = 60;
+	    	@Override
+	        public void run() {
+	    		if(time == 0){
+	    			gameTimer.shutdown();
+	    			System.out.println("Game Over");
+	    		}
+	    		gameTimer(time--);
+	        	
+	        }	
+
+	    	
+	    }, 0, 1, TimeUnit.SECONDS);
 	} 
 	
 	private synchronized void start(){ 
@@ -296,6 +352,11 @@ public class Game extends Canvas implements Runnable{
 		return this.controller;
 	}
 	
+	private void gameTimer(int time) {
+		// TODO Auto-generated method stub
+		timer.setText(Integer.toString(time));
+	}
+	
 	
 	public static void main(String[] args){
 		Game game = new Game();
@@ -320,11 +381,13 @@ public class Game extends Canvas implements Runnable{
 		game.infoPanel.setMaximumSize(new Dimension(220, height*scale));
 		game.infoPanel.setMinimumSize(new Dimension(220, height*scale));
 		game.infoPanel.setLayout(new BorderLayout());
+		game.infoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		
 		
 		game.timerPanel = new JPanel();
-		game.timerPanel.setPreferredSize(new Dimension(220, 100));
-		game.timerPanel.setMaximumSize(new Dimension(220, 100));
-		game.timerPanel.setMinimumSize(new Dimension(220, 100));
+		game.timerPanel.setPreferredSize(new Dimension(210, 100));
+		game.timerPanel.setMaximumSize(new Dimension(210, 100));
+		game.timerPanel.setMinimumSize(new Dimension(210, 100));
 		game.timerPanel.setLayout(new BorderLayout());
 		game.timerLabel = new JLabel("Timer",  JLabel.CENTER);
 		
@@ -342,11 +405,20 @@ public class Game extends Canvas implements Runnable{
 		
 		
 		game.scoreboardPanel = new JPanel();
-		game.scoreboardPanel.setPreferredSize(new Dimension(220, 700));
-		game.scoreboardPanel.setMaximumSize(new Dimension(220, 700));
-		game.scoreboardPanel.setMinimumSize(new Dimension(220, 700));
-		game.scoreboardPanel.setBackground(Color.ORANGE);
+		game.scoreboardPanel.setPreferredSize(new Dimension(210, 690));
+		game.scoreboardPanel.setMaximumSize(new Dimension(210, 690));
+		game.scoreboardPanel.setMinimumSize(new Dimension(210, 690));
+		game.scoreboardPanel.setLayout(new BorderLayout());
 		
+		//game.scoreTable.setRowCount(0);
+		game.scoreTable.setEnabled(false);
+		game.scoreTable.setDragEnabled(false);
+		game.scoreTable.getTableHeader().setReorderingAllowed(false);
+		game.scoreScrollPane = new JScrollPane(game.scoreTable);
+		game.scoreScrollPane.setPreferredSize(new Dimension(210,650));
+		game.scoreScrollPane.setMaximumSize(new Dimension(210,650));
+		game.scoreScrollPane.setMinimumSize(new Dimension(210,650));
+		game.scoreboardPanel.add(game.scoreScrollPane, BorderLayout.SOUTH);
 		
 		
 		game.infoPanel.add(game.timerPanel, BorderLayout.NORTH);
@@ -356,10 +428,39 @@ public class Game extends Canvas implements Runnable{
 		
 		
 		
-		game.chatPanel.setPreferredSize(new Dimension(373, height*scale));
-		game.chatPanel.setMaximumSize(new Dimension(373, height*scale));
-		game.chatPanel.setMinimumSize(new Dimension(373, height*scale));
-		game.chatPanel.setBackground(Color.PINK);
+		game.chatPanel.setPreferredSize(new Dimension(373, 700));
+		game.chatPanel.setMaximumSize(new Dimension(373, 700));
+		game.chatPanel.setMinimumSize(new Dimension(373, 700));
+		game.chatPanel.setLayout(new BorderLayout());
+		game.chatPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+		
+		game.messageArea = new TextArea();
+		game.messageArea.setPreferredSize(new Dimension(373, 550));
+		game.messageArea.setMaximumSize(new Dimension(373, 550));
+		game.messageArea.setMinimumSize(new Dimension(373, 550));
+		game.messageArea.setEditable(false);
+		
+		JPanel inputPanel = new JPanel();
+		inputPanel.setLayout(new BorderLayout());
+		game.inputArea = new TextArea();
+		game.inputArea.setPreferredSize(new Dimension(373, 150));
+		game.inputArea.setMaximumSize(new Dimension(373, 150));
+		game.inputArea.setMinimumSize(new Dimension(373, 150));
+		
+		JPanel buttonPanel = new JPanel();
+		game.sendButton = new JButton("Send");
+		game.sendButton.setPreferredSize(new Dimension(100, 40));
+		game.sendButton.setBackground(Color.PINK);
+		buttonPanel.setPreferredSize(new Dimension(100, 50));
+		buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+		buttonPanel.add(game.sendButton);
+		
+		inputPanel.add(game.inputArea, BorderLayout.NORTH);
+		inputPanel.add(buttonPanel, BorderLayout.SOUTH);
+		
+		game.chatPanel.add(game.messageArea, BorderLayout.NORTH);
+		game.chatPanel.add(inputPanel, BorderLayout.SOUTH);
+		//game.chatPanel.setBackground(Color.PINK);
 		
 		game.frame.add(game.infoPanel, BorderLayout.WEST);
 		game.frame.add(game, BorderLayout.CENTER);
@@ -369,6 +470,12 @@ public class Game extends Canvas implements Runnable{
 		game.frame.setLocationRelativeTo(null);
 		
 		game.start();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

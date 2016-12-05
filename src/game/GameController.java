@@ -104,13 +104,14 @@ public class GameController {
 		return index;
 	}
 	
-	public void setState(String username, double x, double y, char direction, float health, int status){
+	public void setState(String username, double x, double y, char direction, float health, int status, int score){
 		int index = getPlayerIndex(username);
 		this.getEntityList().get(index).setX(x);
 		this.getEntityList().get(index).setY(y);
 		((NetworkPlayer) this.getEntityList().get(index)).setDirection(direction);
 		((NetworkPlayer) this.getEntityList().get(index)).setHealth(health);
 		((NetworkPlayer) this.getEntityList().get(index)).setStatus(status);
+		((NetworkPlayer) this.getEntityList().get(index)).setScore(score);
 	}
 	
 //	public void setProjectile(String username, double x, double y, char direction, int index){

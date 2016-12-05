@@ -64,7 +64,7 @@ public class GameServer extends Thread{
 			
 			case CONNECT:
 				packet = new ConnectPacket(data);
-				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, 'u', 100, 0, ((ConnectPacket) packet).getUsername(), game.input, game.texture, address, port);
+				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, 'u', 100, 0, ((ConnectPacket) packet).getUsername(), 0, game.input, game.texture, address, port);
 				this.addConnection(netplayer, (ConnectPacket) packet);
 				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
 				break;
@@ -129,7 +129,7 @@ public class GameServer extends Thread{
 				send(packet.getData(), p.getAddress(), p.getPort());
 
 				// send a packet to the new player about the existing player
-				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY(),p.getDirection(), p.getHealth(), p.getStatus());
+				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY(),p.getDirection(), p.getHealth(), p.getStatus(), p.getScore());
 				send(pack.getData(), netpl.getAddress(), netpl.getPort());
 			}	
 		}

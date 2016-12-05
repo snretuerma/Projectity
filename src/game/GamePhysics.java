@@ -39,6 +39,8 @@ public class GamePhysics {
 						return (float) 5;
 					}
 					
+				}else if(projectileList.get(i).getX() < 0 || projectileList.get(i).getX() > 800 || projectileList.get(i).getY() > 740 || projectileList.get(i).getY() < 0){
+					projectileList.remove(projectileList.get(i));
 				}
 			}
 			
@@ -47,4 +49,27 @@ public class GamePhysics {
 		return (float) 0;
 	}
 	
+	private int getPlayerIndex(ArrayList<Entity> entityList, Entity player){
+		int index = 0;
+		String username = player.getUsername();
+		for(Entity p : entityList){
+			if(p.getUsername().equals(username)){
+				break;
+			}
+			index++;
+		}
+		return index;
+	}
+	
+	private int getProjectileIndex(ArrayList<Bullet> projectileList, Bullet bullet){ 
+		int index = 0;
+		String username = bullet.getUsername();
+		for(Entity b : projectileList){
+			if(b.getUsername().equals(username)){
+				break;
+			}
+			index++;
+		}
+		return index;
+	}
 }

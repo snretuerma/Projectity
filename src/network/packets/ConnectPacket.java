@@ -11,7 +11,7 @@ public class ConnectPacket extends Packet{
 	private char direction;
 	private float health;
 	private int status;
-	
+	private int score;
 	// for data retrieval
 	public ConnectPacket(byte[] data) {
 		super(1);
@@ -22,11 +22,11 @@ public class ConnectPacket extends Packet{
 		this.direction = stateData[3].charAt(0);
 		this.health = Float.parseFloat(stateData[4]);
 		this.status = Integer.parseInt(stateData[5]);
-		
+		this.score = Integer.parseInt(stateData[6]);
 	}
 	
 	// when sending from client when instantiated
-	public ConnectPacket(String username, double x, double y, char direction, float health, int status){
+	public ConnectPacket(String username, double x, double y, char direction, float health, int status, int score){
 		super(1);
 		this.username = username;
 		this.x = x; 
@@ -34,6 +34,7 @@ public class ConnectPacket extends Packet{
 		this.direction = direction;
 		this.health = health;
 		this.status = status;
+		this.score = score;
 	}
 	
 	@Override
@@ -47,7 +48,7 @@ public class ConnectPacket extends Packet{
 
 	@Override
 	public byte[] getData() {
-		return ("1"+this.username+"/"+getX()+"/"+getY()+"/"+getDirection()+"/"+getHealth()+"/"+getStatus()).getBytes();
+		return ("1"+this.username+"/"+getX()+"/"+getY()+"/"+getDirection()+"/"+getHealth()+"/"+getStatus()+"/"+getScore()).getBytes();
 	}
 	
 	
@@ -95,5 +96,12 @@ public class ConnectPacket extends Packet{
 		return this.status;
 	}
 	
+	public void setScore(int score){
+		this.score = score;
+	}
+	
+	public int getScore(){
+		return this.score;
+	}
 	
 }
