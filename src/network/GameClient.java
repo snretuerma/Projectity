@@ -7,15 +7,19 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import game.Bullet;
 import game.Entity;
 import game.Game;
 import game.KeyInputHandler;
+import game.NetworkBullet;
 import game.NetworkPlayer;
+import game.Player;
 import game.Texture;
 import network.packets.ConnectPacket;
 import network.packets.DisconnectPacket;
 import network.packets.Packet;
 import network.packets.Packet.PacketTypes;
+import network.packets.ShootPacket;
 import network.packets.StatePacket;
 
 public class GameClient extends Thread{
@@ -82,6 +86,12 @@ public class GameClient extends Thread{
 				packet = new StatePacket(data);
 				handleState((StatePacket)packet);
 				break;
+				
+			case SHOOT:
+				packet = new ShootPacket(data);
+				handleShooting((ShootPacket)packet);
+				break;
+				
 			default: 
 				break;
 			
@@ -91,15 +101,30 @@ public class GameClient extends Thread{
 	// client side handler of data connection
 	private void handleConnect(ConnectPacket packet, InetAddress pAddress, int pPort){
 		System.out.println("CLIENT >> [" +pAddress.getHostAddress()+" : " + pPort +"] " + packet.getUsername() + " Joined");
-		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getType(), packet.getUsername(),game.input, game.texture, address, pPort);
+		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus(), packet.getUsername(),game.input, game.texture, address, pPort);
 		// adds the other connected player to the client's entity list
-		//netplayer.setType(1);
-		//System.out.println("Username : " + netplayer.getUsername() + " Type: " + netplayer.getType());
-		//game.getGameController().getEntityList().add(netplayer);
 		game.controller.addEntity(netplayer);
 	}
 	
 	private void handleState(StatePacket packet){
-		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getType());
+		this.game.controller.setState(packet.getUsername(), packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus());
+//		if(packet.getStatus() == 1){
+//			System.out.println("State Changed");
+//			game.controller.addProjectile(new Bullet(packet.getX(), packet.getY(), game.texture, packet.getDirection(), packet.getUsername()));
+//		}
 	}
+	
+	private void handleShooting(ShootPacket packet){	
+//		for(Entity p : game.controller.getEntityList()){
+//			if(p.getUsername() != packet.getUsername()){
+//				System.out.println("Player Name: " + p.getUsername() + " Projectile Count: " +  ((NetworkPlayer) p).getProjectileList().size());
+//				((NetworkPlayer) p).getProjectileList().add(new Bullet(packet.getX(), packet.getY(), game.texture, packet.getDirection(), packet.getUsername()));
+//			}
+//		}
+		
+		//for(Entity p : game.controller.getProjectileList()){
+			this.game.controller.getProjectileList().add(new Bullet(game, packet.getX(), packet.getY(), game.texture, packet.getDirection(), packet.getUsername()));
+		//}
+	}
+	
 }

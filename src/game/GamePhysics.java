@@ -8,7 +8,7 @@ public class GamePhysics {
 	public static float collision(Entity entity, ArrayList<Entity> entityList){
 //		if(entityList.size() > 1){
 			for(int i = 0; i < entityList.size(); i++){
-				if(entityList.get(i) instanceof NetworkPlayer && ((NetworkPlayer) entityList.get(i)).getBounds().intersects(entity.getBounds()) && ((NetworkPlayer) entity).getUsername() != ((NetworkPlayer) entityList.get(i)).getUsername()){
+				if(entityList.get(i) instanceof NetworkPlayer && ((NetworkPlayer) entityList.get(i)).getBounds().intersects(entity.getBounds()) && !((NetworkPlayer) entity).getUsername().equals(((NetworkPlayer) entityList.get(i)).getUsername()) ){
 //						if(((NetworkPlayer) entityList.get(i)).getDirection() == 'u'){
 //							((NetworkPlayer) entityList.get(i)).setY(((NetworkPlayer) entityList.get(i)).getY()+5);
 //						}else if(((NetworkPlayer) entityList.get(i)).getDirection() == 'd'){
@@ -21,34 +21,30 @@ public class GamePhysics {
 					
 					return (float) 0.2;
 				}
-				if(entityList.get(i) instanceof Bullet && ((Bullet) entityList.get(i)).getBounds().intersects(entity.getBounds()) && ((NetworkPlayer) entity).getUsername() != ((Bullet) entityList.get(i)).getUsername()){
-//					if(entity instanceof NetworkPlayer){
-//						if(((Bullet) entityList.get(i)).getDirection() == 'u'){
-//							((NetworkPlayer) entity).setY(((NetworkPlayer) entity).getY()-1);
-//							((NetworkPlayer) entity).setHealth(((NetworkPlayer) entity).getHealth()-5);
-//						}
-//						if(((Bullet) entityList.get(i)).getDirection() == 'd'){
-//							((NetworkPlayer) entity).setY(((NetworkPlayer) entity).getY()+1);
-//							((NetworkPlayer) entity).setHealth(((NetworkPlayer) entity).getHealth()-5);
-//						}
-//						if(((Bullet) entityList.get(i)).getDirection() == 'l'){
-//							((NetworkPlayer) entity).setX(((NetworkPlayer) entity).getX()-1);
-//							((NetworkPlayer) entity).setHealth(((NetworkPlayer) entity).getHealth()-5);
-//						}
-//						if(((Bullet) entityList.get(i)).getDirection() == 'r'){
-//							((NetworkPlayer) entity).setX(((NetworkPlayer) entity).getX()+1);
-//							((NetworkPlayer) entity).setHealth(((NetworkPlayer) entity).getHealth()-5);
-//						}
-//						
-//					}
-					return 5;
-				}
-				
-				
+								
 			}
 			
 //		}
-		return 0;
+		return (float) 0;
+	}
+	
+	
+	public static float projectileCollision(Entity entity, ArrayList<Bullet> projectileList){
+		for(int i = 0; i < projectileList.size(); i++){
+			if(!projectileList.isEmpty()){
+				if(entity.getBounds().intersects(projectileList.get(i).getBounds())){
+					//System.out.println("Projectile username: " + projectileList.get(i).getUsername() + " Entity Username: " + entity.getUsername());
+					if(!entity.getUsername().equals(projectileList.get(i).getUsername())){
+						projectileList.remove(projectileList.get(i));
+						return (float) 5;
+					}
+					
+				}
+			}
+			
+		}
+		
+		return (float) 0;
 	}
 	
 }

@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
+import network.packets.ShootPacket;
 import network.packets.StatePacket;
 
 public class Player extends GameObject implements Entity{
@@ -19,9 +21,10 @@ public class Player extends GameObject implements Entity{
 	private double prevX;
 	private double prevY;
 	private float health;
-	int type;
+	private int status;
+	private ArrayList<Bullet> projectile = new ArrayList<Bullet>();
 	
-	public Player(Game game, double x, double y, char direction, float health, int type, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
+	public Player(Game game, double x, double y, char direction, float health, int status, String username, KeyInputHandler input, Texture texture, InetAddress address, int port){
 		super(game, x, y);
 		this.username = username;
 		this.input = input;
@@ -32,22 +35,24 @@ public class Player extends GameObject implements Entity{
 		this.prevY = y;
 		this.direction = direction;
 		this.health = health;
-		this.type = type;
+		this.status = status;
 	}
 	
 	public void update(){
 			// for smoother movement
 			x+=velocityX;
 			y+=velocityY;
-			float damage = hasCollided();
-			
+			float bumpDamage = hasCollidedEnemy();
+			float hitDamage = hasCollidedProjectile();
 			// send packet only when there are movements in the player or if the player is damaged
-			if(prevX != x || prevY != y || damage > 0 || this.health == 0){
+			if(prevX != x || prevY != y || bumpDamage > 0 || hitDamage> 0 || this.health == 0 || status == 1){
 				prevX = x;
 				prevY = y;
 				
 				// for player collision damage
-				if(damage == (float)0.2){
+				if(bumpDamage == (float)0.2){
+				
+					
 					if(this.direction == 'u'){
 						//this.direction = 'd';
 						this.y = y + 5;
@@ -65,27 +70,38 @@ public class Player extends GameObject implements Entity{
 						this.y = y + 2;
 						this.x = x + 5;
 					}
-					this.health -=damage;
-				
+					
+					if(this.health > 0){
+						this.health -=bumpDamage;
+					}else if(health < 0){
+						respawn();
+					}
+					
 				// for projectile damage
-				}else if(damage == (float)5.0){
+				}else if(hitDamage == (float)5.0){
 					this.health -=5;
-					System.out.println(this.username + " (" +this.health+") was hit");					
 				}
 				
-				if(this.health == 0){
+				if(this.health < 0){
 					respawn();
 				}
 				
-				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y, this.direction, this.health, this.type);
-				packet.writeData(game.client);					
+				StatePacket packet = new StatePacket(this.getUsername(), this.x, this.y, this.direction, this.health, this.status);
+				packet.writeData(game.client);
+				
 			}
-					
+			
+//			if(!projectile.isEmpty()){
+//				for(Bullet bullet : projectile){
+//					bullet.update();
+//				}
+//			}
+			
 			// for window boundary detection
 			if(x <= 0) x = 0;
-			if(x>=757) x=757;
+			if(x>=game.width*game.scale-12) x=game.width*game.scale-13;
 			if(y <= 0) y = 0;
-			if(y >= 555) y = 555;
+			if(y >=740) y = 740;
 			
 	}
 
@@ -98,6 +114,12 @@ public class Player extends GameObject implements Entity{
 		 g.fillRect((int)this.x-9, (int)this.y-15, (int)this.health/2, 5);
 		 g.setColor(Color.white);
 		 g.drawRect((int)this.x-9, (int)this.y-15, 50, 5);
+		 
+//		 if(!projectile.isEmpty()){
+//				for(Bullet bullet : projectile){
+//					bullet.render(g);
+//				}
+//			}
 	}
 	
 	public void setX(double x){
@@ -148,8 +170,20 @@ public class Player extends GameObject implements Entity{
 		this.health = health;
 	}
 	
-	public float hasCollided(){
-		return GamePhysics.collision(this, this.game.getGameController().getEntityList());
+	public float hasCollidedEnemy(){
+		float damage = (float)0;
+		if(GamePhysics.collision(this, this.game.getGameController().getEntityList()) != 0){
+			damage = (float) 0.2;
+		}
+		return damage;
+	}
+	
+	public float hasCollidedProjectile(){
+		float damage = (float)0;
+		if(GamePhysics.projectileCollision(this, this.game.getGameController().getProjectileList()) != 0){
+			damage = (float) 5;
+		}
+		return damage;
 	}
 	
 	private void respawn() {
@@ -166,7 +200,7 @@ public class Player extends GameObject implements Entity{
 		state+=this.y+"/";
 		state+=this.direction+"/";
 		state+=this.health+"/";
-		state+=this.type;
+		state+=this.status;
 		
 		return state;
 	}
@@ -180,12 +214,12 @@ public class Player extends GameObject implements Entity{
 		this.username = username;
 	}
 	
-	public void setType(int type){
-		this.type = type;
+	public void setStatus(int status){
+		this.status = status;
 	}
 	
-	public int getType(){
-		return type;
+	public int getStatus(){
+		return status;
 	}
 	
 	public void setAddress(InetAddress address){
@@ -211,5 +245,19 @@ public class Player extends GameObject implements Entity{
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle((int)x, (int)y, 32, 32);
+	}
+	
+	public void isShooting(int status){
+		setStatus(status);
+		//projectile.add(new Bullet(x, y, texture, direction, username));
+		
+	}
+	
+	public ArrayList<Bullet> getProjectileList(){
+		return this.projectile;
+	}
+	
+	public Texture getTexture(){
+		return this.texture;
 	}
 }

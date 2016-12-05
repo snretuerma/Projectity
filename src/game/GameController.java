@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class GameController {
 	private ArrayList<Entity> entityList = new ArrayList<Entity>();
+	private ArrayList<Bullet> projectileList = new ArrayList<Bullet>();
 	
 	private Texture texture;
 	private Game game;
@@ -21,17 +22,43 @@ public class GameController {
 		return entityList;
 	}
 	
+	public synchronized ArrayList<Bullet> getProjectileList(){
+		return projectileList;
+	}
+	
 	public void update(){
-		for(Entity entity : getEntityList()){
-			entity.update();
+//		for(Entity entity : getEntityList()){
+//			entity.update();
+//			
+//		}
+		
+		for(int i = 0; i < getEntityList().size(); i++){
+			getEntityList().get(i).update();
 		}
+		
+		if(!getProjectileList().isEmpty()){
+			for(Bullet b : getProjectileList()){
+				b.update();
+			}
+		}
+		
 	}
 	
 	public void render(Graphics g){
-		for(Entity entity : getEntityList()){
-			entity.render(g);
+//		for(Entity entity : getEntityList()){
+//			entity.render(g);
+//		}
+
+		for(int i = 0; i < getEntityList().size(); i++){
+			getEntityList().get(i).render(g);
 		}
-	
+		
+		if(!getProjectileList().isEmpty()){
+			for(Bullet b : getProjectileList()){
+				b.render(g);
+			}
+		}
+		
 	}
 	
 	public void addEntity(Entity e){		
@@ -41,7 +68,7 @@ public class GameController {
 //			System.out.println("Added Username: " + ((Player) e).getUsername() + "| Class type: " + ((Player) e).getType());
 //		}
 		getEntityList().add(e);
-		
+		//getProjectileList().add(b);
 //		System.out.println("Player List");
 //		for(Entity b : getEntityList()){
 //			if(b instanceof NetworkPlayer){
@@ -77,17 +104,22 @@ public class GameController {
 		return index;
 	}
 	
-	
-	
-	public void setState(String username, double x, double y, char direction, float health, int type){
+	public void setState(String username, double x, double y, char direction, float health, int status){
 		int index = getPlayerIndex(username);
 		this.getEntityList().get(index).setX(x);
 		this.getEntityList().get(index).setY(y);
 		((NetworkPlayer) this.getEntityList().get(index)).setDirection(direction);
 		((NetworkPlayer) this.getEntityList().get(index)).setHealth(health);
-		((NetworkPlayer) this.getEntityList().get(index)).setType(type);
-		
-
+		((NetworkPlayer) this.getEntityList().get(index)).setStatus(status);
 	}
 	
+//	public void setProjectile(String username, double x, double y, char direction, int index){
+//		this.getProjectileList().get(getPlayerIndex(username))[index].setX(x);
+//		this.getProjectileList().get(getPlayerIndex(username))[index].setX(y);
+//		((Bullet) this.getProjectileList().get(getPlayerIndex(username))[index]).setDirection(direction);
+//	}
+	
+	public void addProjectile(Bullet b){
+		this.getProjectileList().add(b);
+	}
 }

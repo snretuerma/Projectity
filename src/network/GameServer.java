@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import game.Bullet;
 import game.Game;
 import game.GameController;
 import game.KeyInputHandler;
@@ -17,6 +18,7 @@ import network.packets.ConnectPacket;
 import network.packets.DisconnectPacket;
 import network.packets.Packet;
 import network.packets.Packet.PacketTypes;
+import network.packets.ShootPacket;
 import network.packets.StatePacket;
 
 public class GameServer extends Thread{
@@ -79,11 +81,17 @@ public class GameServer extends Thread{
 				this.handleState((StatePacket)packet);
 				break;
 				
+			case SHOOT:
+				packet = new ShootPacket(data);
+				this.handleShooting((ShootPacket)packet);
+				break;
+				
 			default: 
 				break;
 			
 		}
 	}
+
 
 	public void send(byte[] data, InetAddress address, int port){
 		DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
@@ -121,7 +129,7 @@ public class GameServer extends Thread{
 				send(packet.getData(), p.getAddress(), p.getPort());
 
 				// send a packet to the new player about the existing player
-				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY(),p.getDirection(), p.getHealth(), p.getType());
+				ConnectPacket pack = new ConnectPacket(p.getUsername(), p.getX(), p.getY(),p.getDirection(), p.getHealth(), p.getStatus());
 				send(pack.getData(), netpl.getAddress(), netpl.getPort());
 			}	
 		}
@@ -161,7 +169,19 @@ public class GameServer extends Thread{
 			int playerIndex = getPlayerIndex(packet.getUsername());
 			this.playerList.get(playerIndex).x = packet.getX();
 			this.playerList.get(playerIndex).y = packet.getY();
+			this.playerList.get(playerIndex).setDirection(packet.getDirection());
+			this.playerList.get(playerIndex).setHealth(packet.getHealth());
+			this.playerList.get(playerIndex).setStatus(packet.getStatus());
 			packet.writeData(this);
 		}
+	}
+	
+	private void handleShooting(ShootPacket packet) {
+		if(getPlayer(packet.getUsername()) != null){
+			int playerIndex = getPlayerIndex(packet.getUsername());
+			this.playerList.get(playerIndex).getProjectileList().add(new Bullet(game, packet.getX(), packet.getY(), game.texture, packet.getDirection(), packet.getUsername()));
+		}
+		packet.writeData(this);
+		
 	}
 }
