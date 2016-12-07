@@ -31,6 +31,8 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import chat.Client;
+import chat.Server;
 import network.GameClient;
 import network.GameServer;
 import network.packets.ConnectPacket;
@@ -86,6 +88,9 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public GameClient client = null;
 	public GameServer server = null;
 	public Game game;
+	
+	public Server chatServer;
+	public Client chatClient = null;
 	
 	public void init(){
 		requestFocus();
@@ -162,9 +167,14 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		if(JOptionPane.showConfirmDialog(this, "Create Server") == 0){
 			server = new GameServer(this, texture, input, controller, player);
 			server.start();
+			chatServer = new Server(game);
+			chatServer.start();
 		} 	
 		client = new GameClient(this, "localhost", input, texture);
-	    client.start();		  
+		chatClient = new Client(game);
+		chatClient.start();
+		client.start();		  
+	    
 	}
 	
 	private synchronized void stop(){

@@ -5,16 +5,20 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Server{
+import game.Game;
+
+public class Server extends Thread{
 	private static ServerSocket serverSocket = null;
 	private static Socket client = null;
 	private static final ArrayList<Socket> clientList = new ArrayList<Socket>();
+	Game game;
+	public Server(Game game){
+		this.game = game;
+	};
 	
-	public static void main(String[] args){
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("Port: ");
-		int port = Integer.parseInt(scanner.nextLine());
-		System.out.println("Listening to port " + port);
+	public void run(){
+		int port = 8888;
+		game.messageArea.append("Listening to port " + port);
 			
 		try{	
 			serverSocket = new ServerSocket(port);
@@ -28,7 +32,7 @@ public class Server{
 			}
 			
 		}catch(Exception e){
-			System.out.println("Invalid port");
+			game.messageArea.append("Invalid port");
 			try {
 				serverSocket.close();
 				client.close();
@@ -36,6 +40,5 @@ public class Server{
 			clientList.clear();
 			
 		}
-		scanner.close();
 	}
 }

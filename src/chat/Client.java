@@ -4,19 +4,26 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client implements Runnable{
+import game.Game;
+
+public class Client extends Thread{
 	private static boolean connected = true;
 	private static Scanner scanner = null;
 	private static Socket client = null;
 	private static DataOutputStream dataOutput = null;
 	private static DataInputStream dataInput = null;
+	public Game game;
+
 	
-	public static void main(String[] args){
+	public Client(Game game){
+		this.game = game;
+	};
+	
+	public void run(){
 		try{
 			scanner = new Scanner(System.in);
 			String servername = "localhost";
-			System.out.print("Port: ");
-			int port = Integer.parseInt(scanner.nextLine());
+			int port = 8888;
 			
 			try{
 				client = new Socket(servername, port);
@@ -27,7 +34,19 @@ public class Client implements Runnable{
 				dataInput = new DataInputStream(client.getInputStream());
 				
 				if(client!=null && dataOutput!=null && dataInput!=null){
-					new Thread(new Client()).start();
+					new Thread(){
+			            public void run() {
+			            	try{
+			        			while(connected){
+			        				System.out.println(dataInput.readUTF());
+			        			}
+			        			
+			        		}catch(Exception e){
+			        			connected = false;
+			        			System.out.println("Disconnected from the server");
+			        		}	
+			            }
+			        }.start();;
 					
 					while(connected){
 						try{
@@ -53,17 +72,17 @@ public class Client implements Runnable{
 		
 	}
 
-	@Override
-	public void run() {
-		try{
-			while(connected){
-				System.out.println(dataInput.readUTF());
-			}
-			
-		}catch(Exception e){
-			connected = false;
-			System.out.println("Disconnected from the server");
-		}	
-	}
+//	@Override
+//	public void run() {
+//		try{
+//			while(connected){
+//				System.out.println(dataInput.readUTF());
+//			}
+//			
+//		}catch(Exception e){
+//			connected = false;
+//			System.out.println("Disconnected from the server");
+//		}	
+//	}
 	
 }
