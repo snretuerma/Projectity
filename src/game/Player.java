@@ -195,7 +195,7 @@ public class Player extends GameObject implements Entity{
 	
 	public float hasCollidedProjectile(){
 		float damage = (float)0;
-		if(GamePhysics.projectileCollision(this, this.game.getGameController().getProjectileList()) != 0){
+		if(GamePhysics.projectileCollision(this, this.game.getGameController().getProjectileList(), this.game.getGameController().getEntityList()) != 0){
 			damage = (float) 5;
 			
 		}

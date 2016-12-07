@@ -14,3 +14,10 @@ Terrain Tileset
 	GNU GPL 3.0:
 	 - http://www.gnu.org/licenses/gpl-3.0.html
 	 - See the file: gpl-3.0.txt
+	 
+	 
+## Game Manual/Tutorial
+1. Create a game server
+2. Clients will automatically join the game in the server
+3. Use the arrow keys to move
+4. Use the space bar to fire a projectile

@@ -29,7 +29,7 @@ public class GamePhysics {
 	}
 	
 	
-	public static float projectileCollision(Entity entity, ArrayList<Bullet> projectileList){
+	public static float projectileCollision(Entity entity, ArrayList<Bullet> projectileList, ArrayList<Entity> entityList){
 		for(int i = 0; i < projectileList.size(); i++){
 			if(!projectileList.isEmpty()){
 				if(entity.getBounds().intersects(projectileList.get(i).getBounds())){
@@ -38,7 +38,13 @@ public class GamePhysics {
 						//System.out.println(entity.getUsername()+ ((Player) entity).getHealth());
 						if(((Player) entity).getHealth()-5 <= 0){
 							//System.out.println(entity.getUsername() + " was killed by " + projectileList.get(i).getUsername());
-							((Player) entity).setScore(((Player) entity).getScore()-1);
+							
+							for(int j = 0; j < entityList.size(); j++){
+								if(projectileList.get(i).getUsername().equals(entityList.get(j))){
+									((Player) entityList.get(j)).setScore(((Player) entityList.get(j)).getScore()+1);
+									System.out.println(((Player) entityList.get(j)).getScore());
+								}
+							}
 						}
 						projectileList.remove(projectileList.get(i));
 						return (float) 5;
