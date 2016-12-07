@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import game.Bullet;
 import game.Game;
@@ -66,6 +67,7 @@ public class GameServer extends Thread{
 				packet = new ConnectPacket(data);
 				NetworkPlayer netplayer = new NetworkPlayer(game, 100.0, 100.0, 'u', 100, 0, ((ConnectPacket) packet).getUsername(), 0, game.input, game.texture, address, port);
 				this.addConnection(netplayer, (ConnectPacket) packet);
+				
 				System.out.println("SERVER >> [" +address.getHostAddress()+" : " + port +"] " + ((ConnectPacket) packet).getUsername() + " Connected");
 				break;
 				
@@ -135,6 +137,7 @@ public class GameServer extends Thread{
 		}
 		if(!connected){
 			this.playerList.add(netpl);
+			// game.scoreBoardModel.addRow(new Object[]{netpl.getUsername(), netpl.getScore()});
 		}
 	}
 	

@@ -68,6 +68,7 @@ public class GameController {
 //			System.out.println("Added Username: " + ((Player) e).getUsername() + "| Class type: " + ((Player) e).getType());
 //		}
 		getEntityList().add(e);
+		game.scoreBoardModel.addRow(new Object[]{e.getUsername(), ((Player) e).getScore()});
 		//getProjectileList().add(b);
 //		System.out.println("Player List");
 //		for(Entity b : getEntityList()){
@@ -112,6 +113,7 @@ public class GameController {
 		((NetworkPlayer) this.getEntityList().get(index)).setHealth(health);
 		((NetworkPlayer) this.getEntityList().get(index)).setStatus(status);
 		((NetworkPlayer) this.getEntityList().get(index)).setScore(score);
+		
 	}
 	
 //	public void setProjectile(String username, double x, double y, char direction, int index){

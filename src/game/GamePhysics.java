@@ -35,6 +35,11 @@ public class GamePhysics {
 				if(entity.getBounds().intersects(projectileList.get(i).getBounds())){
 					//System.out.println("Projectile username: " + projectileList.get(i).getUsername() + " Entity Username: " + entity.getUsername());
 					if(!entity.getUsername().equals(projectileList.get(i).getUsername())){
+						//System.out.println(entity.getUsername()+ ((Player) entity).getHealth());
+						if(((Player) entity).getHealth()-5 <= 0){
+							//System.out.println(entity.getUsername() + " was killed by " + projectileList.get(i).getUsername());
+							((Player) entity).setScore(((Player) entity).getScore()-1);
+						}
 						projectileList.remove(projectileList.get(i));
 						return (float) 5;
 					}

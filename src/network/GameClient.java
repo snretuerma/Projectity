@@ -104,6 +104,7 @@ public class GameClient extends Thread{
 		NetworkPlayer netplayer = new NetworkPlayer(game, packet.getX(), packet.getY(), packet.getDirection(), packet.getHealth(), packet.getStatus(), packet.getUsername(), packet.getScore(), game.input, game.texture, address, pPort);
 		// adds the other connected player to the client's entity list
 		game.controller.addEntity(netplayer);
+		//game.scoreBoardModel.addRow(new Object[]{netplayer.getUsername(), netplayer.getScore()});
 	}
 	
 	private void handleState(StatePacket packet){

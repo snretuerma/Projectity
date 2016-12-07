@@ -21,12 +21,12 @@ public class ChatThread extends Thread{
 		try{
 			input = new DataInputStream(client.getInputStream());
 			output = new DataOutputStream(client.getOutputStream());
-			output.writeUTF("Username: ");
-			String username = input.readUTF().trim();
+			//output.writeUTF("Username: ");
+			//String username = input.readUTF().trim();
 			
 			for(int i = 0; i < clientList.size(); i++){
 				DataOutputStream broadcast = new DataOutputStream(clientList.get(i).getOutputStream());
-				broadcast.writeUTF("Server : " + username + " Connected");
+				//broadcast.writeUTF("Server : " + username + " Connected");
 			}
 			
 			while(true){
@@ -34,7 +34,7 @@ public class ChatThread extends Thread{
 				
 				for(int i = 0; i < clientList.size(); i++){
 					DataOutputStream broadcast = new DataOutputStream(clientList.get(i).getOutputStream());
-					broadcast.writeUTF(username + " : " + message);
+					broadcast.writeUTF(message);
 				}
 			}
 			

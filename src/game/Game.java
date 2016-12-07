@@ -79,6 +79,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	
 	public Texture texture = null;
 	public Player player;
+	public int playercount;
 	public Bullet[] bullet = new Bullet[5];
 	public GameController controller = null;
 	public KeyInputHandler input = null;
@@ -108,6 +109,10 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		this.windowHandler = new WindowHandler(this);
 		texture = new Texture(this);
 		username = JOptionPane.showInputDialog(this, "Username");
+		
+		chatClient = new Client(game, username);
+		chatClient.start();
+		
 		player = new NetworkPlayer(game, randomPosition(this.getWidth()*this.scale), randomPosition(this.getHeight()*this.scale), 'u', 100, 0, username, 0, input, texture, null, -1);
 		controller = new GameController(this, input, texture);
 		controller.addEntity(player);
@@ -118,42 +123,43 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			server.addConnection((NetworkPlayer) player, packet);
 		}
 		packet.writeData(client);
-		final ScheduledExecutorService startTimer = Executors.newSingleThreadScheduledExecutor();
-		startTimer.scheduleAtFixedRate(new Runnable() {
-	    	int time = 10;
-	    	@Override
-	        public void run() {
-	    		if(time == 0){
-	    			startTimer.shutdown();
-	    			System.out.println("Start");
-	    		}
-	    		gameTimer(time--);
-	        	
-	        }	
-
-	    	
-	    }, 0, 1, TimeUnit.SECONDS);
-	    try {
-			TimeUnit.SECONDS.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	    
-	    final ScheduledExecutorService gameTimer = Executors.newSingleThreadScheduledExecutor();
-	    gameTimer.scheduleAtFixedRate(new Runnable() {
-	    	int time = 60;
-	    	@Override
-	        public void run() {
-	    		if(time == 0){
-	    			gameTimer.shutdown();
-	    			System.out.println("Game Over");
-	    		}
-	    		gameTimer(time--);
-	        	
-	        }	
-
-	    	
-	    }, 0, 1, TimeUnit.SECONDS);
+		
+//		final ScheduledExecutorService startTimer = Executors.newSingleThreadScheduledExecutor();
+//		startTimer.scheduleAtFixedRate(new Runnable() {
+//	    	int time = 30;
+//	    	@Override
+//	        public void run() {
+//	    		if(time == 0){
+//	    			startTimer.shutdown();
+//	    			System.out.println("Start");
+//	    		}
+//	    		gameTimer(time--);
+//	        	
+//	        }	
+//
+//	    	
+//	    }, 0, 1, TimeUnit.SECONDS);
+//	    try {
+//			TimeUnit.SECONDS.sleep(30);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//	    
+//	    final ScheduledExecutorService gameTimer = Executors.newSingleThreadScheduledExecutor();
+//	    gameTimer.scheduleAtFixedRate(new Runnable() {
+//	    	int time = 60;
+//	    	@Override
+//	        public void run() {
+//	    		if(time == 0){
+//	    			gameTimer.shutdown();
+//	    			System.out.println("Game Over");
+//	    		}
+//	    		gameTimer(time--);
+//	        	
+//	        }	
+//
+//	    	
+//	    }, 0, 1, TimeUnit.SECONDS);
 	} 
 	
 	private synchronized void start(){ 
@@ -169,10 +175,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			server.start();
 			chatServer = new Server(game);
 			chatServer.start();
+			//playercount = Integer.parseInt(JOptionPane.showInputDialog("Number of players : "));
 		} 	
+			
 		client = new GameClient(this, "localhost", input, texture);
-		chatClient = new Client(game);
-		chatClient.start();
+		
 		client.start();		  
 	    
 	}
@@ -227,8 +234,6 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			
 			if(System.currentTimeMillis() - timer > 1000){
 				timer += 1000;
-				//System.out.println("Updates : " + updates + " FPS: " + frames);
-				
 				// reset updates and frame counter
 				updates = 0;
 				frames = 0;
@@ -402,7 +407,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		game.timerLabel = new JLabel("Timer",  JLabel.CENTER);
 		
 		
-		game.timer = new JLabel("120");
+		game.timer = new JLabel("");
 		game.timer.setFont(new Font("Serif", Font.PLAIN, 50));
 		game.timer.setHorizontalAlignment(JLabel.CENTER);
 		game.timer.setVerticalAlignment(JLabel.CENTER);
@@ -424,6 +429,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		game.scoreTable.setEnabled(false);
 		game.scoreTable.setDragEnabled(false);
 		game.scoreTable.getTableHeader().setReorderingAllowed(false);
+		
 		game.scoreScrollPane = new JScrollPane(game.scoreTable);
 		game.scoreScrollPane.setPreferredSize(new Dimension(210,650));
 		game.scoreScrollPane.setMaximumSize(new Dimension(210,650));
@@ -436,8 +442,6 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		//game.infoPanel.setBackground(Color.ORANGE);
 		
 		
-		
-		
 		game.chatPanel.setPreferredSize(new Dimension(373, 700));
 		game.chatPanel.setMaximumSize(new Dimension(373, 700));
 		game.chatPanel.setMinimumSize(new Dimension(373, 700));
@@ -448,6 +452,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		game.messageArea.setPreferredSize(new Dimension(373, 550));
 		game.messageArea.setMaximumSize(new Dimension(373, 550));
 		game.messageArea.setMinimumSize(new Dimension(373, 550));
+		game.messageArea.setFont(new Font("Verdana", Font.PLAIN, 15));
 		game.messageArea.setEditable(false);
 		
 		JPanel inputPanel = new JPanel();
@@ -461,6 +466,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		game.sendButton = new JButton("Send");
 		game.sendButton.setPreferredSize(new Dimension(100, 40));
 		game.sendButton.setBackground(Color.PINK);
+		game.sendButton.addActionListener(game);
 		buttonPanel.setPreferredSize(new Dimension(100, 50));
 		buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
 		buttonPanel.add(game.sendButton);
@@ -486,6 +492,9 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
+		if(e.getSource() == sendButton){
+			game.chatClient.sendMessage();
+		}
 	}
 	
 }

@@ -18,8 +18,7 @@ public class Server extends Thread{
 	
 	public void run(){
 		int port = 8888;
-		game.messageArea.append("Listening to port " + port);
-			
+		game.messageArea.append("Listening to port " + port + "\n");
 		try{	
 			serverSocket = new ServerSocket(port);
 			
@@ -32,7 +31,7 @@ public class Server extends Thread{
 			}
 			
 		}catch(Exception e){
-			game.messageArea.append("Invalid port");
+			//	game.messageArea.append("Invalid port");
 			try {
 				serverSocket.close();
 				client.close();

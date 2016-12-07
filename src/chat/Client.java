@@ -13,10 +13,12 @@ public class Client extends Thread{
 	private static DataOutputStream dataOutput = null;
 	private static DataInputStream dataInput = null;
 	public Game game;
-
+	public String username;
+	private boolean active = false;
 	
-	public Client(Game game){
+	public Client(Game game, String username){
 		this.game = game;
+		this.username = username;
 	};
 	
 	public void run(){
@@ -27,8 +29,8 @@ public class Client extends Thread{
 			
 			try{
 				client = new Socket(servername, port);
-				System.out.println("Connecting to " + servername + " on port " + port );
-				System.out.println("Connected to " + client.getRemoteSocketAddress());
+				//System.out.println("Connecting to " + servername + " on port " + port );
+				//System.out.println("Connected to " + client.getRemoteSocketAddress());
 				
 				dataOutput = new DataOutputStream(client.getOutputStream());
 				dataInput = new DataInputStream(client.getInputStream());
@@ -38,7 +40,7 @@ public class Client extends Thread{
 			            public void run() {
 			            	try{
 			        			while(connected){
-			        				System.out.println(dataInput.readUTF());
+			        				game.messageArea.append(dataInput.readUTF()+"\n");
 			        			}
 			        			
 			        		}catch(Exception e){
@@ -48,12 +50,19 @@ public class Client extends Thread{
 			            }
 			        }.start();;
 					
+			        //active = sendMessage();
 					while(connected){
 						try{
-							dataOutput.writeUTF(scanner.nextLine());
+							if(active){
+								System.out.flush();
+								dataOutput.writeUTF(username + " : " + game.inputArea.getText());
+								active = false;
+							}
+							
 						}catch(Exception e){
 							System.out.println("Disconnected from server");
 						}
+						
 					}
 					
 					client.close();
@@ -71,7 +80,16 @@ public class Client extends Thread{
 		}
 		
 	}
-
+	
+	
+	public String getClientUsername(){
+		return this.username;
+	}
+	
+	public void sendMessage(){
+		this.active = true;
+	}
+	
 //	@Override
 //	public void run() {
 //		try{
